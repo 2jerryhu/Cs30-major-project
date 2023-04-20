@@ -2,7 +2,7 @@
 
 ## Project Description
 
-Describe yo shit
+Describe
 
 ## Needs To Have List
 
