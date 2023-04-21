@@ -14,7 +14,6 @@ function draw() {
   background(220);
   push();
   translate(mouseX, mouseY);
-
   text("belloooooo", 300, 300);
   pop();
 }
