@@ -6,10 +6,8 @@
 // - describe what you did to take this project "above and beyond"
 // use p5play?
 
-let frosty;
-
 class Letter {
-  constructor(x, y, array, index, prompt) {
+  constructor(x, y, array, index) {
     this.x = x;
     this.y = y;
     this.array = array;
@@ -25,7 +23,7 @@ class Letter {
     text(this.array[this.index], this.x, this.y);
   }
 
-  update() {
+  updateNextLetter() {
 
   }
 }
@@ -34,9 +32,11 @@ function preload() {
   frosty = loadStrings("assets/forsty-the-snowman.txt");
 }
 
-
+let frosty;
+let promptArray = [];
 let letters = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-let thisKey = new Letter(200, 200, letters, 4);
+let x = 200;
+let y = 200;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -44,10 +44,16 @@ function setup() {
 
 function draw() {
   background(220);
-  thisKey.display();
   for (let snowmans in frosty.length) {
-    
     let letterNumber = 0;
+    // figure out which order in the alphabet it's in
+    if (frosty[snowmans] === "a") {
+      letterNumber = 1;
+    }
+    // compare typed letter with displayed letter
+    let thisKey = new Letter(x, y, letters, letterNumber);
+    thisKey.display();
+    
 
   }
 }
