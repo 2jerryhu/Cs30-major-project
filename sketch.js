@@ -12,14 +12,15 @@ class Letter {
     this.y = y;
     this.array = array;
     this.index = index;
-    this.prompt = prompt;
     this.letterSize = 16;
+    this.textFont = "cambria";
     this.rgb = 140;
   }
 
   display() {
     fill(this.rgb);
     textSize(this.letterSize);
+    textFont(this.textFont);
     text(this.array[this.index], this.x, this.y);
   }
 
@@ -43,17 +44,24 @@ function setup() {
 }
 
 function draw() {
-  background(220);
-  for (let snowmans in frosty.length) {
+  for (let i = 0; i < frosty.length; i++) {
     let letterNumber = 0;
-    // figure out which order in the alphabet it's in
-    if (frosty[snowmans] === "a") {
-      letterNumber = 1;
+
+    if (frosty[0].charCodeAt(i) === 32) {
+      letterNumber = 0;
     }
+    else {
+      letterNumber = frosty[0].charCodeAt(i) - 96;
+    }
+
+    console.log(letterNumber);
     // compare typed letter with displayed letter
     let thisKey = new Letter(x, y, letters, letterNumber);
+    promptArray.push(thisKey);
+
     thisKey.display();
     
+    x += 16;
 
   }
 }
