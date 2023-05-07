@@ -47,11 +47,11 @@ function draw() {
   for (let i = 0; i < frosty.length; i++) {
     let letterNumber = 0;
 
-    if (frosty[0].charCodeAt(i) === 32) {
+    if (frosty[0][i].charCodeAt(i) === 32) {
       letterNumber = 0;
     }
     else {
-      letterNumber = frosty[0].charCodeAt(i) - 96;
+      letterNumber = frosty[0][i].charCodeAt(i) - 96;
     }
 
     console.log(letterNumber);
