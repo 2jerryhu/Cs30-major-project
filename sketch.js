@@ -21,6 +21,7 @@ class Letter {
     fill(this.rgb);
     textSize(this.letterSize);
     textFont(this.textFont);
+    textAlign(CENTER);
     text(this.array[this.index], this.x, this.y);
   }
 
@@ -41,27 +42,33 @@ let y = 200;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-}
-
-function draw() {
-  for (let i = 0; i < frosty.length; i++) {
+  for (let i = 0; i < frosty[0].length; i++) {
     let letterNumber = 0;
 
-    if (frosty[0][i].charCodeAt(i) === 32) {
+    if (frosty[0][i].charCodeAt(0) === 32) {
       letterNumber = 0;
     }
     else {
-      letterNumber = frosty[0][i].charCodeAt(i) - 96;
+      letterNumber = frosty[0][i].charCodeAt(0) - 96;
     }
 
-    console.log(letterNumber);
     // compare typed letter with displayed letter
     let thisKey = new Letter(x, y, letters, letterNumber);
     promptArray.push(thisKey);
 
     thisKey.display();
-    
-    x += 16;
+
+    if (x >= windowWidth - 160) {
+      y += 40;
+      x = 200;
+    }
+    else {
+      x += 10;
+    }
 
   }
+}
+
+function draw() {
+
 }
