@@ -31,7 +31,8 @@ class Letter {
 }
 
 function preload() {
-  frosty = loadStrings("assets/forsty-the-snowman.txt");
+  promptArray.push(loadStrings("assets/forsty-the-snowman.txt"));
+  
 }
 
 let frosty;
@@ -39,17 +40,34 @@ let promptArray = [];
 let letters = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 let x = 200;
 let y = 200;
+let startButton;
+let promptIndex;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  for (let i = 0; i < frosty[0].length; i++) {
+  startButton = createButton("Start");
+  startButton.position(100, 100);
+  startButton.mousePressed(displayPrompt);
+}
+
+function draw() {
+
+}
+
+function displayPrompt() {
+  promptIndex = Math.floor(random(0, 1));
+  showPrompt(promptIndex);
+}
+
+function showPrompt(u) {
+  for (let i = 0; i < frosty[u].length; i++) {
     let letterNumber = 0;
 
-    if (frosty[0][i].charCodeAt(0) === 32) {
+    if (frosty[u][i].charCodeAt(0) === 32) {
       letterNumber = 0;
     }
     else {
-      letterNumber = frosty[0][i].charCodeAt(0) - 96;
+      letterNumber = frosty[u][i].charCodeAt(0) - 96;
     }
 
     // compare typed letter with displayed letter
@@ -67,8 +85,5 @@ function setup() {
     }
 
   }
-}
-
-function draw() {
 
 }
