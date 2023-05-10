@@ -37,9 +37,9 @@ function preload() {
 
 let frosty;
 let promptArray = [];
+let thePrompt = [];
 let letters = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-let x = 200;
-let y = 200;
+let x, y;
 let startButton;
 let promptIndex;
 
@@ -55,6 +55,9 @@ function draw() {
 }
 
 function displayPrompt() {
+  background("white");
+  x = 200;
+  y = 200;
   promptIndex = Math.floor(random(promptArray.length));
   showPrompt(promptIndex);
 }
@@ -62,8 +65,6 @@ function displayPrompt() {
 function showPrompt(u) {
   for (let i = 0; i < promptArray[u][0].length; i++) {
     let letterNumber = 0;
-    console.log(u);
-    console.log(promptArray[u][0][i]);
     if (promptArray[u][0][i].charCodeAt(0) === 32) {
       letterNumber = 0;
     }
@@ -73,11 +74,11 @@ function showPrompt(u) {
 
     // compare typed letter with displayed letter
     let thisKey = new Letter(x, y, letters, letterNumber);
-    // promptArray.push(thisKey);
-
+    
+    thePrompt.push(promptArray[u][0][i]); 
     thisKey.display();
 
-    if (x >= windowWidth - 160) {
+    if (x >= windowWidth - 160 && thePrompt[i] === " ") {
       y += 40;
       x = 200;
     }
