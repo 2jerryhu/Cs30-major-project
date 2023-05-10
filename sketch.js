@@ -32,7 +32,7 @@ class Letter {
 
 function preload() {
   promptArray.push(loadStrings("assets/forsty-the-snowman.txt"));
-  
+  promptArray.push(loadStrings("assets/be-or-not.txt"));
 }
 
 let frosty;
@@ -55,24 +55,25 @@ function draw() {
 }
 
 function displayPrompt() {
-  promptIndex = Math.floor(random(0, 1));
+  promptIndex = Math.floor(random(promptArray.length));
   showPrompt(promptIndex);
 }
 
 function showPrompt(u) {
-  for (let i = 0; i < frosty[u].length; i++) {
+  for (let i = 0; i < promptArray[u][0].length; i++) {
     let letterNumber = 0;
-
-    if (frosty[u][i].charCodeAt(0) === 32) {
+    console.log(u);
+    console.log(promptArray[u][0][i]);
+    if (promptArray[u][0][i].charCodeAt(0) === 32) {
       letterNumber = 0;
     }
     else {
-      letterNumber = frosty[u][i].charCodeAt(0) - 96;
+      letterNumber = promptArray[u][0][i].charCodeAt(0) - 96;
     }
 
     // compare typed letter with displayed letter
     let thisKey = new Letter(x, y, letters, letterNumber);
-    promptArray.push(thisKey);
+    // promptArray.push(thisKey);
 
     thisKey.display();
 
