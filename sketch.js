@@ -26,7 +26,13 @@ class Letter {
   }
 
   updateNextLetter() {
-
+    if (key === this.array[this.index] && keyIsPressed) {
+      fill("yellow");
+      textSize(this.letterSize);
+      textFont(this.textFont);
+      textAlign(CENTER);
+      text(this.array[this.index], this.x, this.y);
+    }
   }
 }
 
@@ -35,10 +41,11 @@ function preload() {
   promptArray.push(loadStrings("assets/be-or-not.txt"));
 }
 
+// ASCII
 let frosty;
 let promptArray = [];
 let thePrompt = [];
-let letters = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+let lowercaseLetters = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 let x, y;
 let startButton;
 let promptIndex;
@@ -55,6 +62,7 @@ function draw() {
 }
 
 function displayPrompt() {
+  thePrompt = [];
   background("white");
   x = 200;
   y = 200;
@@ -71,11 +79,12 @@ function showPrompt(u) {
     else {
       letterNumber = promptArray[u][0][i].charCodeAt(0) - 96;
     }
-
+    
     // compare typed letter with displayed letter
-    let thisKey = new Letter(x, y, letters, letterNumber);
+    let thisKey = new Letter(x, y, lowercaseLetters, letterNumber);
     
     thePrompt.push(promptArray[u][0][i]); 
+    console.log(thePrompt);
     thisKey.display();
 
     if (x >= windowWidth - 160 && thePrompt[i] === " ") {
