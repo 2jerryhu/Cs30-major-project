@@ -44,8 +44,12 @@ function preload() {
 // ASCII
 let frosty;
 let promptArray = [];
+let compareKeys = [];
 let thePrompt = [];
+// combine these arrays when not lazy
 let lowercaseLetters = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+let upercaseLetters = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+let punctuation = ["!", "'", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@"];
 let x, y;
 let startButton;
 let promptIndex;
@@ -58,7 +62,9 @@ function setup() {
 }
 
 function draw() {
+  if (promptArray[promptIndex][0].length === thePrompt.length) {
 
+  }
 }
 
 function displayPrompt() {
@@ -68,11 +74,13 @@ function displayPrompt() {
   y = 200;
   promptIndex = Math.floor(random(promptArray.length));
   showPrompt(promptIndex);
+  return promptIndex;
 }
 
 function showPrompt(u) {
   for (let i = 0; i < promptArray[u][0].length; i++) {
     let letterNumber = 0;
+
     if (promptArray[u][0][i].charCodeAt(0) === 32) {
       letterNumber = 0;
     }
@@ -83,9 +91,9 @@ function showPrompt(u) {
     // compare typed letter with displayed letter
     let thisKey = new Letter(x, y, lowercaseLetters, letterNumber);
     
+    compareKeys.push(thisKey);
     thePrompt.push(promptArray[u][0][i]); 
-    console.log(thePrompt);
-    thisKey.display();
+    compareKeys[i].display();
 
     if (x >= windowWidth - 160 && thePrompt[i] === " ") {
       y += 40;
