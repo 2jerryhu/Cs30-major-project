@@ -17,8 +17,8 @@ class Letter {
     this.rgb = 140;
   }
 
-  display() {
-    fill(this.rgb);
+  display(rgb) {
+    fill(rgb);
     textSize(this.letterSize);
     textFont(this.textFont);
     textAlign(CENTER);
@@ -27,11 +27,8 @@ class Letter {
 
   updateNextLetter() {
     if (key === this.array[this.index] && keyIsPressed) {
-      fill("yellow");
-      textSize(this.letterSize);
-      textFont(this.textFont);
-      textAlign(CENTER);
-      text(this.array[this.index], this.x, this.y);
+      this.display("yellow");
+      return true;
     }
   }
 }
@@ -53,6 +50,9 @@ let punctuation = ["!", "'", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "
 let x, y;
 let startButton;
 let promptIndex;
+let buttonClicked = false;
+let letterCounter = 0;
+let isRight;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -62,8 +62,18 @@ function setup() {
 }
 
 function draw() {
-  if (promptArray[promptIndex][0].length === thePrompt.length) {
-
+  if (buttonClicked === true) {
+    isRight = false;
+    // promptArray[promptIndex][0].length === thePrompt.length 
+    compareKeys[letterCounter].updateNextLetter();
+    if (compareKeys[letterCounter].updateNextLetter()) {
+      letterCounter++;
+    }
+    else if (keyIsPressed) {
+      compareKeys[letterCounter].display("red");
+    }
+    // location checker, don't need loop (already in draw loop)
+    // add one to right character when right key, add one to wrong key when wrong key
   }
 }
 
@@ -74,6 +84,7 @@ function displayPrompt() {
   y = 200;
   promptIndex = Math.floor(random(promptArray.length));
   showPrompt(promptIndex);
+  buttonClicked = true;
   return promptIndex;
 }
 
@@ -93,7 +104,7 @@ function showPrompt(u) {
     
     compareKeys.push(thisKey);
     thePrompt.push(promptArray[u][0][i]); 
-    compareKeys[i].display();
+    compareKeys[i].display("grey");
 
     if (x >= windowWidth - 160 && thePrompt[i] === " ") {
       y += 40;
