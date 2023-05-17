@@ -18,6 +18,13 @@ class Letter {
   }
 
   display(rgb) {
+    noStroke();
+    // fill("white");
+    // textSize(this.letterSize + 1);
+    // textFont(this.textFont);
+    // textAlign(CENTER);
+    // text(this.array[this.index], this.x, this.y);
+
     fill(rgb);
     textSize(this.letterSize);
     textFont(this.textFont);
@@ -29,6 +36,9 @@ class Letter {
     if (key === this.array[this.index] && keyIsPressed) {
       this.display("yellow");
       return true;
+    }
+    else if (key !== this.array[this.index] && keyIsPressed) {
+      this.display("red");
     }
   }
 }
@@ -55,23 +65,34 @@ let letterCounter = 0;
 let isRight;
 
 function setup() {
+
   createCanvas(windowWidth, windowHeight);
   startButton = createButton("Start");
   startButton.position(100, 100);
   startButton.mousePressed(displayPrompt);
 }
 
+
+function keyPressed() {
+  if (keyIsPressed) {
+    compareKeys[letterCounter].updateNextLetter();
+  }
+  if (compareKeys[letterCounter].updateNextLetter()) {
+    letterCounter++;
+  }
+  console.log(letterCounter);
+}
+
 function draw() {
   if (buttonClicked === true) {
-    isRight = false;
-    // promptArray[promptIndex][0].length === thePrompt.length 
-    compareKeys[letterCounter].updateNextLetter();
-    if (compareKeys[letterCounter].updateNextLetter()) {
-      letterCounter++;
-    }
-    else if (keyIsPressed) {
-      compareKeys[letterCounter].display("red");
-    }
+    // if (keyIsPressed) {
+    //   compareKeys[letterCounter].updateNextLetter();
+    // }
+    // if (compareKeys[letterCounter].updateNextLetter()) {
+    //   letterCounter++;
+    // }
+
+    console.log(letterCounter);
     // location checker, don't need loop (already in draw loop)
     // add one to right character when right key, add one to wrong key when wrong key
   }
@@ -79,7 +100,7 @@ function draw() {
 
 function displayPrompt() {
   thePrompt = [];
-  background("white");
+  background(60);
   x = 200;
   y = 200;
   promptIndex = Math.floor(random(promptArray.length));
@@ -104,7 +125,7 @@ function showPrompt(u) {
     
     compareKeys.push(thisKey);
     thePrompt.push(promptArray[u][0][i]); 
-    compareKeys[i].display("grey");
+    compareKeys[i].display(130);
 
     if (x >= windowWidth - 160 && thePrompt[i] === " ") {
       y += 40;
