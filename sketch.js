@@ -6,13 +6,15 @@
 // - describe what you did to take this project "above and beyond"
 // use p5play?
 
+// !!!!!  Text width, font kerning !!!!!!!!!!
+
 class Letter {
   constructor(x, y, array, index) {
     this.x = x;
     this.y = y;
     this.array = array;
     this.index = index;
-    this.letterSize = 16;
+    this.letterSize = 20;
     this.textFont = "cambria";
     this.rgb = 140;
   }
@@ -28,7 +30,7 @@ class Letter {
     fill(rgb);
     textSize(this.letterSize);
     textFont(this.textFont);
-    textAlign(CENTER);
+    // textAlign(CENTER);
     text(this.array[this.index], this.x, this.y);
   }
 
@@ -62,10 +64,8 @@ let startButton;
 let promptIndex;
 let buttonClicked = false;
 let letterCounter = 0;
-let isRight;
 
 function setup() {
-
   createCanvas(windowWidth, windowHeight);
   startButton = createButton("Start");
   startButton.position(100, 100);
@@ -127,12 +127,14 @@ function showPrompt(u) {
     thePrompt.push(promptArray[u][0][i]); 
     compareKeys[i].display(130);
 
+    let theTextWidth = textWidth(thePrompt[i]);
+
     if (x >= windowWidth - 160 && thePrompt[i] === " ") {
       y += 40;
       x = 200;
     }
     else {
-      x += 10;
+      x += theTextWidth + 2;
     }
 
   }
