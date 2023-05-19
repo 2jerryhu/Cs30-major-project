@@ -64,6 +64,8 @@ let startButton;
 let promptIndex;
 let buttonClicked = false;
 let letterCounter = 0;
+let theTextWidthArray = [];
+let dx = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -74,28 +76,39 @@ function setup() {
 
 
 function keyPressed() {
+  let moveLine = false;
   if (keyIsPressed) {
     compareKeys[letterCounter].updateNextLetter();
   }
   if (compareKeys[letterCounter].updateNextLetter()) {
     letterCounter++;
+    moveLine = true;
   }
   console.log(letterCounter);
+
+  stroke("yellow");
+  if (letterCounter !== 0 && moveLine) {
+    push();
+    stroke(60);
+    strokeWeight(2.5);
+    line(200 + dx, 200 + 5, 200 + dx, 200 - 15);
+    pop();
+
+    if (200 + dx >= windowWidth - 160 && thePrompt[letterCounter - 1] === " ") {
+      y += 40;
+      dx = 0;
+    }
+
+    dx += theTextWidthArray[letterCounter - 1] + 2;
+    line(200 + dx, 200 + 5, 200 + dx, 200 - 15);
+  }
+  else if (letterCounter === 0) {
+    line(200, 200 + 5, 200, 200 - 15);
+  } 
 }
 
 function draw() {
-  if (buttonClicked === true) {
-    // if (keyIsPressed) {
-    //   compareKeys[letterCounter].updateNextLetter();
-    // }
-    // if (compareKeys[letterCounter].updateNextLetter()) {
-    //   letterCounter++;
-    // }
 
-    console.log(letterCounter);
-    // location checker, don't need loop (already in draw loop)
-    // add one to right character when right key, add one to wrong key when wrong key
-  }
 }
 
 function displayPrompt() {
@@ -127,14 +140,14 @@ function showPrompt(u) {
     thePrompt.push(promptArray[u][0][i]); 
     compareKeys[i].display(130);
 
-    let theTextWidth = textWidth(thePrompt[i]);
+    theTextWidthArray.push(textWidth(thePrompt[i]));
 
     if (x >= windowWidth - 160 && thePrompt[i] === " ") {
       y += 40;
       x = 200;
     }
     else {
-      x += theTextWidth + 2;
+      x += theTextWidthArray[i] + 2;
     }
 
   }
