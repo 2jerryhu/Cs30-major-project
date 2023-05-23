@@ -39,8 +39,10 @@ class Letter {
       this.display("yellow");
       return true;
     }
-    else if (key !== this.array[this.index] && keyIsPressed) {
+    // search up special characters
+    else if (key !== this.array[this.index] && keyIsPressed && keyCode > 47 && keyCode < 91 || keyCode === 32) {
       this.display("red");
+      return false;
     }
   }
 }
@@ -58,7 +60,7 @@ let thePrompt = [];
 // combine these arrays when not lazy
 let lowercaseLetters = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 let upercaseLetters = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
-let punctuation = ["!", "'", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@"];
+let punctuation = ["!", "'", "#", "$", "%", "&", "\"", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@"];
 let x, y;
 let startButton;
 let promptIndex;
@@ -76,16 +78,30 @@ function setup() {
 }
 
 
+function draw() {
+  if (letterCounter === 0 && buttonClicked) {
+    stroke("yellow");
+    line(200, 200 + 5, 200, 200 - 15);
+  }
+}
+
 function keyPressed() {
   let moveLine = false;
-  if (keyIsPressed) {
+  if (keyIsPressed && keyCode > 47 && keyCode < 91 || keyCode === 32) {
     compareKeys[letterCounter].updateNextLetter();
-  }
-  if (compareKeys[letterCounter].updateNextLetter()) {
     letterCounter++;
     moveLine = true;
+    console.log("bello");
   }
-  console.log(letterCounter);
+  if (keyIsPressed && keyCode === 8 && !compareKeys[letterCounter].updateNextLetter()) {
+    letterCounter--;
+  }
+  // if (compareKeys[letterCounter].updateNextLetter()) {
+  //   letterCounter++;
+  //   moveLine = true;
+  // }
+  // console.log(letterCounter);
+
 
   stroke("yellow");
   if (letterCounter !== 0 && moveLine) {
@@ -102,13 +118,6 @@ function keyPressed() {
 
     dx += theTextWidthArray[letterCounter - 1] + 2;
     line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
-  }
-}
-
-function draw() {
-  if (letterCounter === 0 && buttonClicked) {
-    stroke("yellow");
-    line(200, 200 + 5, 200, 200 - 15);
   }
 }
 
