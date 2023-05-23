@@ -66,6 +66,7 @@ let buttonClicked = false;
 let letterCounter = 0;
 let theTextWidthArray = [];
 let dx = 0;
+let dy = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -91,24 +92,24 @@ function keyPressed() {
     push();
     stroke(60);
     strokeWeight(2.5);
-    line(200 + dx, 200 + 5, 200 + dx, 200 - 15);
+    line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
     pop();
 
     if (200 + dx >= windowWidth - 160 && thePrompt[letterCounter - 1] === " ") {
-      y += 40;
-      dx = 0;
+      dy += 40;
+      dx = -1 * (theTextWidthArray[letterCounter - 1] + 2);
     }
 
     dx += theTextWidthArray[letterCounter - 1] + 2;
-    line(200 + dx, 200 + 5, 200 + dx, 200 - 15);
+    line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
   }
-  else if (letterCounter === 0) {
-    line(200, 200 + 5, 200, 200 - 15);
-  } 
 }
 
 function draw() {
-
+  if (letterCounter === 0 && buttonClicked) {
+    stroke("yellow");
+    line(200, 200 + 5, 200, 200 - 15);
+  }
 }
 
 function displayPrompt() {
