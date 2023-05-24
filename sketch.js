@@ -85,15 +85,19 @@ function draw() {
   }
 }
 
+let wrongKeysCounter = 0;
+
 function keyPressed() {
   let moveLine = false;
-  if (keyIsPressed && keyCode > 47 && keyCode < 91 || keyCode === 32) {
+  if (keyIsPressed && keyCode > 47 && keyCode < 91 || keyCode === 32) {   
+    if (!compareKeys[letterCounter].updateNextLetter()) {
+      wrongKeysCounter++;
+    }
     compareKeys[letterCounter].updateNextLetter();
     letterCounter++;
     moveLine = true;
-    console.log("bello");
   }
-  if (keyIsPressed && keyCode === 8 && !compareKeys[letterCounter].updateNextLetter()) {
+  if (keyIsPressed && keyCode === 8 && wrongKeysCounter !== 0) {
     letterCounter--;
   }
   // if (compareKeys[letterCounter].updateNextLetter()) {
@@ -103,8 +107,8 @@ function keyPressed() {
   // console.log(letterCounter);
 
 
-  stroke("yellow");
   if (letterCounter !== 0 && moveLine) {
+    stroke("yellow");
     push();
     stroke(60);
     strokeWeight(2.5);
