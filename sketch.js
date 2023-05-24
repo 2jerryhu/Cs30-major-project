@@ -88,17 +88,20 @@ function draw() {
 let wrongKeysCounter = 0;
 
 function keyPressed() {
+  // moveLine  makes it so special characters don't move
   let moveLine = false;
   if (keyIsPressed && keyCode > 47 && keyCode < 91 || keyCode === 32) {   
-    if (!compareKeys[letterCounter].updateNextLetter()) {
+    if (!compareKeys[letterCounter].updateNextLetter() || wrongKeysCounter !== 0) {
       wrongKeysCounter++;
     }
-    compareKeys[letterCounter].updateNextLetter();
+    if (wrongKeysCounter === 0) {
+      compareKeys[letterCounter].updateNextLetter();
+    }
+    else {
+      compareKeys[letterCounter].display("red");
+    }
     letterCounter++;
     moveLine = true;
-  }
-  if (keyIsPressed && keyCode === 8 && wrongKeysCounter !== 0) {
-    letterCounter--;
   }
   // if (compareKeys[letterCounter].updateNextLetter()) {
   //   letterCounter++;
@@ -106,7 +109,7 @@ function keyPressed() {
   // }
   // console.log(letterCounter);
 
-
+  let endingPosition;
   if (letterCounter !== 0 && moveLine) {
     stroke("yellow");
     push();
@@ -117,12 +120,34 @@ function keyPressed() {
 
     if (200 + dx >= windowWidth - 160 && thePrompt[letterCounter - 1] === " ") {
       dy += 40;
+      endingPosition = dx;
       dx = -1 * (theTextWidthArray[letterCounter - 1] + 2);
     }
 
     dx += theTextWidthArray[letterCounter - 1] + 2;
     line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
   }
+  if (keyIsPressed && keyCode === 8 && wrongKeysCounter !== 0) {
+    letterCounter--;
+    wrongKeysCounter--;
+
+    stroke("yellow");
+    push();
+    stroke(60);
+    strokeWeight(2.5);
+    line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
+    pop();
+
+    if (200 + dx >= windowWidth - 160 && thePrompt[letterCounter - 1] === " ") {
+      dy -= 40;
+      dx = endingPosition;
+    }
+    dx += -1 * theTextWidthArray[letterCounter] - 2;
+    line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
+    compareKeys[letterCounter].display(140);
+  }
+  console.log(letterCounter);
+  console.log(wrongKeysCounter);
 }
 
 function displayPrompt() {
