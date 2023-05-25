@@ -9,14 +9,16 @@
 // !!!!!  Text width, font kerning !!!!!!!!!!
 
 class Letter {
-  constructor(x, y, array, index) {
+  constructor(x, y, array, index, state) {
     this.x = x;
     this.y = y;
     this.array = array;
     this.index = index;
+    this.state = state;
     this.letterSize = 20;
     this.textFont = "cambria";
     this.rgb = 140;
+
   }
 
   display(rgb) {
@@ -53,10 +55,9 @@ function preload() {
 }
 
 // ASCII
-let frosty;
-let promptArray = [];
-let compareKeys = [];
-let thePrompt = [];
+let promptArray = []; // array that stores prompts
+let compareKeys = []; // array that stores each key class
+let thePrompt = []; // each individual letter in the prompt
 // combine these arrays when not lazy
 let lowercaseLetters = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 let upercaseLetters = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
@@ -69,6 +70,8 @@ let letterCounter = 0;
 let theTextWidthArray = [];
 let dx = 0;
 let dy = 0;
+let wrongKeysCounter = 0;
+let endingPosition;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -85,11 +88,11 @@ function draw() {
   }
 }
 
-let wrongKeysCounter = 0;
 
 function keyPressed() {
   // moveLine  makes it so special characters don't move
   let moveLine = false;
+  // state variables, not if statements
   if (keyIsPressed && keyCode > 47 && keyCode < 91 || keyCode === 32) {   
     if (!compareKeys[letterCounter].updateNextLetter() || wrongKeysCounter !== 0) {
       wrongKeysCounter++;
@@ -109,7 +112,7 @@ function keyPressed() {
   // }
   // console.log(letterCounter);
 
-  let endingPosition;
+  // right key
   if (letterCounter !== 0 && moveLine) {
     stroke("yellow");
     push();
@@ -118,6 +121,7 @@ function keyPressed() {
     line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
     pop();
 
+    // breaks when letter counter is space
     if (200 + dx >= windowWidth - 160 && thePrompt[letterCounter - 1] === " ") {
       dy += 40;
       endingPosition = dx;
@@ -127,6 +131,8 @@ function keyPressed() {
     dx += theTextWidthArray[letterCounter - 1] + 2;
     line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
   }
+
+  // backspace
   if (keyIsPressed && keyCode === 8 && wrongKeysCounter !== 0) {
     letterCounter--;
     wrongKeysCounter--;
@@ -138,11 +144,13 @@ function keyPressed() {
     line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
     pop();
 
-    if (200 + dx >= windowWidth - 160 && thePrompt[letterCounter - 1] === " ") {
-      dy -= 40;
-      dx = endingPosition;
-    }
+    console.log(endingPosition);
     dx += -1 * theTextWidthArray[letterCounter] - 2;
+    if (dx === 0 && thePrompt[letterCounter - 1] === " ") {
+      dy -= 40;
+      dx = endingPosition + textWidth(" ") + 2;
+      console.log(dx);
+    }
     line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
     compareKeys[letterCounter].display(140);
   }
@@ -173,7 +181,7 @@ function showPrompt(u) {
     }
     
     // compare typed letter with displayed letter
-    let thisKey = new Letter(x, y, lowercaseLetters, letterNumber);
+    let thisKey = new Letter(x, y, lowercaseLetters, letterNumber); // here
     
     compareKeys.push(thisKey);
     thePrompt.push(promptArray[u][0][i]); 
