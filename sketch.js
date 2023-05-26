@@ -17,33 +17,33 @@ class Letter {
     this.state = state;
     this.letterSize = 20;
     this.textFont = "cambria";
-    this.rgb = 140;
-
+    if (state === "neutral") {
+      this.rgb = 140;
+    }
+    else if (state === "correct") {
+      this.rgb = "yellow";
+    }
+    else if (state === "incorrect") {
+      this.rgb = "red";
+    }
   }
 
-  display(rgb) {
+  display() {
     noStroke();
-    // fill("white");
-    // textSize(this.letterSize + 1);
-    // textFont(this.textFont);
-    // textAlign(CENTER);
-    // text(this.array[this.index], this.x, this.y);
-
-    fill(rgb);
+    fill(this.rgb);
     textSize(this.letterSize);
     textFont(this.textFont);
-    // textAlign(CENTER);
     text(this.array[this.index], this.x, this.y);
   }
 
   updateNextLetter() {
     if (key === this.array[this.index] && keyIsPressed) {
-      this.display("yellow");
+      this.state = "correct";
       return true;
     }
     // search up special characters
     else if (key !== this.array[this.index] && keyIsPressed && keyCode > 47 && keyCode < 91 || keyCode === 32) {
-      this.display("red");
+      this.state = "incorrect";
       return false;
     }
   }
@@ -87,7 +87,6 @@ function draw() {
     line(200, 200 + 5, 200, 200 - 15);
   }
 }
-
 
 function keyPressed() {
   // moveLine  makes it so special characters don't move
@@ -181,7 +180,7 @@ function showPrompt(u) {
     }
     
     // compare typed letter with displayed letter
-    let thisKey = new Letter(x, y, lowercaseLetters, letterNumber); // here
+    let thisKey = new Letter(x, y, lowercaseLetters, letterNumber, "neutral"); // here
     
     compareKeys.push(thisKey);
     thePrompt.push(promptArray[u][0][i]); 
