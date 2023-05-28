@@ -92,6 +92,7 @@ function keyPressed() {
   // moveLine  makes it so special characters don't move
   let moveLine = false;
   // state variables, not if statements
+  // compareKeys[letterCounter].state = "correct";
   if (keyIsPressed && keyCode > 47 && keyCode < 91 || keyCode === 32) {   
     if (!compareKeys[letterCounter].updateNextLetter() || wrongKeysCounter !== 0) {
       wrongKeysCounter++;
