@@ -17,20 +17,19 @@ class Letter {
     this.state = state;
     this.letterSize = 20;
     this.textFont = "cambria";
-    if (state === "neutral") {
-      this.rgb = 140;
-    }
-    else if (state === "correct") {
-      this.rgb = "yellow";
-    }
-    else if (state === "incorrect") {
-      this.rgb = "red";
-    }
   }
 
   display() {
     noStroke();
-    fill(this.rgb);
+    if (this.state === "neutral") {
+      fill(130);
+    }
+    else if (this.state === "correct") {
+      fill("yellow");
+    }
+    else if (this.state === "incorrect") {
+      fill("red");
+    }
     textSize(this.letterSize);
     textFont(this.textFont);
     text(this.array[this.index], this.x, this.y);
@@ -86,31 +85,32 @@ function draw() {
     stroke("yellow");
     line(200, 200 + 5, 200, 200 - 15);
   }
+  if (buttonClicked) {
+    for (let keys in compareKeys) {
+      compareKeys[keys].display();
+    }
+  }
 }
 
 function keyPressed() {
   // moveLine  makes it so special characters don't move
   let moveLine = false;
-  // state variables, not if statements
-  // compareKeys[letterCounter].state = "correct";
+
   if (keyIsPressed && keyCode > 47 && keyCode < 91 || keyCode === 32) {   
     if (!compareKeys[letterCounter].updateNextLetter() || wrongKeysCounter !== 0) {
       wrongKeysCounter++;
     }
+
     if (wrongKeysCounter === 0) {
       compareKeys[letterCounter].updateNextLetter();
     }
     else {
-      compareKeys[letterCounter].display("red");
+      compareKeys[letterCounter].state = "incorrect";
     }
+
     letterCounter++;
     moveLine = true;
   }
-  // if (compareKeys[letterCounter].updateNextLetter()) {
-  //   letterCounter++;
-  //   moveLine = true;
-  // }
-  // console.log(letterCounter);
 
   // right key
   if (letterCounter !== 0 && moveLine) {
@@ -136,26 +136,25 @@ function keyPressed() {
   if (keyIsPressed && keyCode === 8 && wrongKeysCounter !== 0) {
     letterCounter--;
     wrongKeysCounter--;
-
     stroke("yellow");
+
     push();
     stroke(60);
     strokeWeight(2.5);
     line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
     pop();
-
+    
     console.log(endingPosition);
     dx += -1 * theTextWidthArray[letterCounter] - 2;
-    if (dx === 0 && thePrompt[letterCounter - 1] === " ") {
+    if (dx === -1 * (theTextWidthArray[letterCounter] + 2) && thePrompt[letterCounter] === " ") {
       dy -= 40;
-      dx = endingPosition + textWidth(" ") + 2;
+      dx = endingPosition;
       console.log(dx);
     }
     line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
-    compareKeys[letterCounter].display(140);
+    compareKeys[letterCounter].state = "neutral";
+    compareKeys[letterCounter].display();
   }
-  console.log(letterCounter);
-  console.log(wrongKeysCounter);
 }
 
 function displayPrompt() {
