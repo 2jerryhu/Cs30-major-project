@@ -23,12 +23,23 @@ class Letter {
     noStroke();
     if (this.state === "neutral") {
       fill(130);
+      push();
+      stroke(60);
+      strokeWeight(0.5);
+      line(this.x, this.y + 2, this.x  + textWidth(this.array[this.index]) + 2, this.y + 2);
+      pop();
     }
     else if (this.state === "correct") {
       fill("yellow");
     }
     else if (this.state === "incorrect") {
       fill("red");
+      // css styling for underline?
+      push();
+      stroke("red");
+      strokeWeight(0.5);
+      line(this.x, this.y + 2, this.x  + textWidth(this.array[this.index]) + 2, this.y + 2);
+      pop();
     }
     textSize(this.letterSize);
     textFont(this.textFont);
@@ -74,6 +85,7 @@ let endingPosition;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  
   startButton = createButton("Start");
   startButton.position(100, 100);
   startButton.mousePressed(displayPrompt);
@@ -83,10 +95,11 @@ function setup() {
 function draw() {
   if (letterCounter === 0 && buttonClicked) {
     stroke("yellow");
-    line(200, 200 + 5, 200, 200 - 15);
+    line(200, 200 + 1, 200, 200 - 15);
   }
   if (buttonClicked) {
     for (let keys in compareKeys) {
+      smooth();
       compareKeys[keys].display();
     }
   }
@@ -118,7 +131,7 @@ function keyPressed() {
     push();
     stroke(60);
     strokeWeight(2.5);
-    line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
+    line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
     pop();
 
     // breaks when letter counter is space
@@ -129,11 +142,11 @@ function keyPressed() {
     }
 
     dx += theTextWidthArray[letterCounter - 1] + 2;
-    line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
+    line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
   }
 
   // backspace
-  if (keyIsPressed && keyCode === 8 && wrongKeysCounter !== 0) {
+  if (keyIsDown && keyCode === 8 && wrongKeysCounter !== 0) {
     letterCounter--;
     wrongKeysCounter--;
     stroke("yellow");
@@ -141,7 +154,7 @@ function keyPressed() {
     push();
     stroke(60);
     strokeWeight(2.5);
-    line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
+    line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
     pop();
     
     console.log(endingPosition);
@@ -151,7 +164,7 @@ function keyPressed() {
       dx = endingPosition;
       console.log(dx);
     }
-    line(200 + dx, 200 + 5 + dy, 200 + dx, 200 - 15 + dy);
+    line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
     compareKeys[letterCounter].state = "neutral";
     compareKeys[letterCounter].display();
   }
