@@ -128,13 +128,13 @@ function keyPressed() {
   // right key
   if (letterCounter !== 0 && moveLine) {
     stroke("yellow");
+
     push();
     stroke(60);
     strokeWeight(2.5);
     line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
     pop();
 
-    // breaks when letter counter is space
     if (200 + dx >= windowWidth - 160 && thePrompt[letterCounter - 1] === " ") {
       dy += 40;
       endingPosition = dx;
