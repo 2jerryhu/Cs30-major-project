@@ -103,9 +103,11 @@ function draw() {
       compareKeys[keys].display();
     }
   }
+  handleKeys();
 }
 
-function keyPressed() {
+// timer for backspace
+function handleKeys() {
   // moveLine  makes it so special characters don't move
   let moveLine = false;
 
