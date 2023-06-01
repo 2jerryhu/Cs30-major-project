@@ -104,12 +104,11 @@ function draw() {
       compareKeys[keys].display();
     }
   }
-  if (keyHeld) {
-    console.log("bello");
-  }
+  handleKeys();
 }
 
-function keyPressed() {
+// timer for backspace
+function handleKeys() {
   // moveLine  makes it so special characters don't move
   let moveLine = false;
 
