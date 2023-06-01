@@ -82,6 +82,7 @@ let dx = 0;
 let dy = 0;
 let wrongKeysCounter = 0;
 let endingPosition;
+let keyHeld;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -102,6 +103,9 @@ function draw() {
       smooth();
       compareKeys[keys].display();
     }
+  }
+  if (keyHeld) {
+    console.log("bello");
   }
 }
 
@@ -167,6 +171,13 @@ function keyPressed() {
     line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
     compareKeys[letterCounter].state = "neutral";
     compareKeys[letterCounter].display();
+    keyHeld = true;
+  }
+}
+
+function keyReleased() {
+  if (keyCode === 8) {
+    keyHeld = false;
   }
 }
 
