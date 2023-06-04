@@ -92,7 +92,6 @@ function setup() {
   startButton.position(100, 100);
   startButton.mousePressed(displayPrompt);
 
-  backspaceTimer = new Timer(1000);
 }
 
 
