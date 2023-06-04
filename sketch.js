@@ -83,6 +83,7 @@ let dy = 0;
 let wrongKeysCounter = 0;
 let endingPosition;
 let keyHeld;
+let backspaceTimer;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -90,6 +91,8 @@ function setup() {
   startButton = createButton("Start");
   startButton.position(100, 100);
   startButton.mousePressed(displayPrompt);
+
+  backspaceTimer = new Timer(1000);
 }
 
 
@@ -104,11 +107,14 @@ function draw() {
       compareKeys[keys].display();
     }
   }
-  handleKeys();
+  console.log(keyHeld);
+  if (keyHeld && wrongKeysCounter != 0) {
+    backspaceKey();
+  }
 }
 
 // timer for backspace
-function handleKeys() {
+function keyPressed() {
   // moveLine  makes it so special characters don't move
   let moveLine = false;
 
@@ -150,26 +156,7 @@ function handleKeys() {
 
   // backspace
   if (keyIsDown && keyCode === 8 && wrongKeysCounter !== 0) {
-    letterCounter--;
-    wrongKeysCounter--;
-    stroke("yellow");
-
-    push();
-    stroke(60);
-    strokeWeight(2.5);
-    line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
-    pop();
-    
-    console.log(endingPosition);
-    dx += -1 * theTextWidthArray[letterCounter] - 2;
-    if (dx === -1 * (theTextWidthArray[letterCounter] + 2) && thePrompt[letterCounter] === " ") {
-      dy -= 40;
-      dx = endingPosition;
-      console.log(dx);
-    }
-    line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
-    compareKeys[letterCounter].state = "neutral";
-    compareKeys[letterCounter].display();
+    backspaceKey();
     keyHeld = true;
   }
 }
@@ -178,6 +165,28 @@ function keyReleased() {
   if (keyCode === 8) {
     keyHeld = false;
   }
+}
+
+function backspaceKey() {
+  letterCounter--;
+  wrongKeysCounter--;
+  stroke("yellow");
+
+  push();
+  stroke(60);
+  strokeWeight(2.5);
+  line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+  pop();
+  
+  console.log(endingPosition);
+  dx += -1 * theTextWidthArray[letterCounter] - 2;
+  if (dx === -1 * (theTextWidthArray[letterCounter] + 2) && thePrompt[letterCounter] === " ") {
+    dy -= 40;
+    dx = endingPosition;
+    console.log(dx);
+  }
+  line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+  compareKeys[letterCounter].state = "neutral";
 }
 
 function displayPrompt() {
