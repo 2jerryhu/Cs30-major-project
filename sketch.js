@@ -92,6 +92,7 @@ function setup() {
   startButton.position(100, 100);
   startButton.mousePressed(displayPrompt);
 
+  backspaceTimer = new Timer(350);
 }
 
 
@@ -106,8 +107,7 @@ function draw() {
       compareKeys[keys].display();
     }
   }
-  console.log(keyHeld);
-  if (keyHeld && wrongKeysCounter != 0) {
+  if (keyHeld && wrongKeysCounter != 0 && backspaceTimer.expired()) {
     backspaceKey();
   }
 }
@@ -117,7 +117,7 @@ function keyPressed() {
   // moveLine  makes it so special characters don't move
   let moveLine = false;
 
-  if (keyIsPressed && keyCode > 47 && keyCode < 91 || keyCode === 32) {   
+  if (letterCounter < thePrompt.length && keyIsPressed && (keyCode > 47 && keyCode < 91 || keyCode === 32)) {   
     if (!compareKeys[letterCounter].updateNextLetter() || wrongKeysCounter !== 0) {
       wrongKeysCounter++;
     }
@@ -157,12 +157,14 @@ function keyPressed() {
   if (keyIsDown && keyCode === 8 && wrongKeysCounter !== 0) {
     backspaceKey();
     keyHeld = true;
+    backspaceTimer.start();
   }
 }
 
 function keyReleased() {
   if (keyCode === 8) {
     keyHeld = false;
+    backspaceTimer.reset();
   }
 }
 
@@ -189,6 +191,7 @@ function backspaceKey() {
 }
 
 function displayPrompt() {
+  letterCounter = 0;
   thePrompt = [];
   background(60);
   x = 200;
