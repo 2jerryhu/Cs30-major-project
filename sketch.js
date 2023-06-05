@@ -98,7 +98,7 @@ function setup() {
   backspaceTimer = new Timer(350);
 }
 
-
+// DIFFERENT PAGES - STATES
 function draw() {
   if (letterCounter === 0 && buttonClicked) {
     stroke("yellow");
@@ -110,13 +110,16 @@ function draw() {
       compareKeys[keys].display();
     }
   }
-  if (keyHeld && wrongKeysCounter != 0 && backspaceTimer.expired()) {
+  if (keyHeld && wrongKeysCounter !== 0 && backspaceTimer.expired()) {
     backspaceKey();
   }
-  if (ctrlHeld && wrongKeysCounter != 0) {
+
+  if (ctrlHeld && wrongKeysCounter !== 0) {
     if (keyIsPressed && keyCode === 8) {
+      // pushing backsapce does another thing
       push();
       stroke(60);
+      strokeWeight(2.5);
       line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
       pop();
 
@@ -126,16 +129,14 @@ function draw() {
       dy = correctDy;
 
       letterCounter -= wrongKeysCounter;
-      while (wrongKeysCounter != 0) {
+      while (wrongKeysCounter !== 0) {
         compareKeys[letterCounter + wrongKeysCounter - 1].state = "neutral";
         wrongKeysCounter--;
       }
-      wrongKeysCounter = 0;
     }
   }
 }
 
-// timer for backspace
 function keyPressed() {
   // moveLine  makes it so special characters don't move
   let moveLine = false;
@@ -176,10 +177,13 @@ function keyPressed() {
     line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
 
     if (compareKeys[letterCounter - 1].state === "correct" && letterCounter > 0) {
-      console.log("bello");
       correctDx = dx;
       correctDy = dy;
     }
+  }
+
+  if (keyCode === 17 && wrongKeysCounter !== 0) {
+    ctrlHeld = true;
   }
 
   // backspace
@@ -187,10 +191,6 @@ function keyPressed() {
     backspaceKey();
     keyHeld = true;
     backspaceTimer.start();
-  }
-
-  if (keyCode === 17 && wrongKeysCounter !== 0) {
-    ctrlHeld = true;
   }
 }
 
@@ -215,12 +215,10 @@ function backspaceKey() {
   line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
   pop();
   
-  console.log(endingPosition);
   dx += -1 * theTextWidthArray[letterCounter] - 2;
   if (dx === -1 * (theTextWidthArray[letterCounter] + 2) && thePrompt[letterCounter] === " ") {
     dy -= 40;
     dx = endingPosition;
-    console.log(dx);
   }
   line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
   compareKeys[letterCounter].state = "neutral";
@@ -250,7 +248,7 @@ function showPrompt(u) {
     }
     
     // compare typed letter with displayed letter
-    let thisKey = new Letter(x, y, lowercaseLetters, letterNumber, "neutral"); // here
+    let thisKey = new Letter(x, y, lowercaseLetters, letterNumber, "neutral"); 
     
     compareKeys.push(thisKey);
     thePrompt.push(promptArray[u][0][i]); 
