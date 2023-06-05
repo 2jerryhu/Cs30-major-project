@@ -80,10 +80,13 @@ let letterCounter = 0;
 let theTextWidthArray = [];
 let dx = 0;
 let dy = 0;
+let correctDx = 0;
+let correctDy = 0;
 let wrongKeysCounter = 0;
 let endingPosition;
 let keyHeld;
 let backspaceTimer;
+let ctrlHeld;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -109,6 +112,26 @@ function draw() {
   }
   if (keyHeld && wrongKeysCounter != 0 && backspaceTimer.expired()) {
     backspaceKey();
+  }
+  if (ctrlHeld && wrongKeysCounter != 0) {
+    if (keyIsPressed && keyCode === 8) {
+      push();
+      stroke(60);
+      line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+      pop();
+
+      stroke("yellow");
+      line(200 + correctDx, 200 + 1 + correctDy, 200 + correctDx, 200 - 15 + correctDy);
+      dx = correctDx;
+      dy = correctDy;
+
+      letterCounter -= wrongKeysCounter;
+      while (wrongKeysCounter != 0) {
+        compareKeys[letterCounter + wrongKeysCounter - 1].state = "neutral";
+        wrongKeysCounter--;
+      }
+      wrongKeysCounter = 0;
+    }
   }
 }
 
@@ -151,6 +174,12 @@ function keyPressed() {
 
     dx += theTextWidthArray[letterCounter - 1] + 2;
     line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+
+    if (compareKeys[letterCounter - 1].state === "correct" && letterCounter > 0) {
+      console.log("bello");
+      correctDx = dx;
+      correctDy = dy;
+    }
   }
 
   // backspace
@@ -159,12 +188,19 @@ function keyPressed() {
     keyHeld = true;
     backspaceTimer.start();
   }
+
+  if (keyCode === 17 && wrongKeysCounter !== 0) {
+    ctrlHeld = true;
+  }
 }
 
 function keyReleased() {
   if (keyCode === 8) {
     keyHeld = false;
     backspaceTimer.reset();
+  }
+  if (keyCode === 17) {
+    ctrlHeld = false;
   }
 }
 
