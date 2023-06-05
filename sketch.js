@@ -80,9 +80,13 @@ let letterCounter = 0;
 let theTextWidthArray = [];
 let dx = 0;
 let dy = 0;
+let correctDx = 0;
+let correctDy = 0;
 let wrongKeysCounter = 0;
 let endingPosition;
 let keyHeld;
+let backspaceTimer;
+let ctrlHeld;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -90,6 +94,8 @@ function setup() {
   startButton = createButton("Start");
   startButton.position(100, 100);
   startButton.mousePressed(displayPrompt);
+
+  backspaceTimer = new Timer(350);
 }
 
 
@@ -104,15 +110,37 @@ function draw() {
       compareKeys[keys].display();
     }
   }
-  handleKeys();
+  if (keyHeld && wrongKeysCounter != 0 && backspaceTimer.expired()) {
+    backspaceKey();
+  }
+  if (ctrlHeld && wrongKeysCounter != 0) {
+    if (keyIsPressed && keyCode === 8) {
+      push();
+      stroke(60);
+      line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+      pop();
+
+      stroke("yellow");
+      line(200 + correctDx, 200 + 1 + correctDy, 200 + correctDx, 200 - 15 + correctDy);
+      dx = correctDx;
+      dy = correctDy;
+
+      letterCounter -= wrongKeysCounter;
+      while (wrongKeysCounter != 0) {
+        compareKeys[letterCounter + wrongKeysCounter - 1].state = "neutral";
+        wrongKeysCounter--;
+      }
+      wrongKeysCounter = 0;
+    }
+  }
 }
 
 // timer for backspace
-function handleKeys() {
+function keyPressed() {
   // moveLine  makes it so special characters don't move
   let moveLine = false;
 
-  if (keyIsPressed && keyCode > 47 && keyCode < 91 || keyCode === 32) {   
+  if (letterCounter < thePrompt.length && keyIsPressed && (keyCode > 47 && keyCode < 91 || keyCode === 32)) {   
     if (!compareKeys[letterCounter].updateNextLetter() || wrongKeysCounter !== 0) {
       wrongKeysCounter++;
     }
@@ -146,41 +174,60 @@ function handleKeys() {
 
     dx += theTextWidthArray[letterCounter - 1] + 2;
     line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+
+    if (compareKeys[letterCounter - 1].state === "correct" && letterCounter > 0) {
+      console.log("bello");
+      correctDx = dx;
+      correctDy = dy;
+    }
   }
 
   // backspace
   if (keyIsDown && keyCode === 8 && wrongKeysCounter !== 0) {
-    letterCounter--;
-    wrongKeysCounter--;
-    stroke("yellow");
-
-    push();
-    stroke(60);
-    strokeWeight(2.5);
-    line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
-    pop();
-    
-    console.log(endingPosition);
-    dx += -1 * theTextWidthArray[letterCounter] - 2;
-    if (dx === -1 * (theTextWidthArray[letterCounter] + 2) && thePrompt[letterCounter] === " ") {
-      dy -= 40;
-      dx = endingPosition;
-      console.log(dx);
-    }
-    line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
-    compareKeys[letterCounter].state = "neutral";
-    compareKeys[letterCounter].display();
+    backspaceKey();
     keyHeld = true;
+    backspaceTimer.start();
+  }
+
+  if (keyCode === 17 && wrongKeysCounter !== 0) {
+    ctrlHeld = true;
   }
 }
 
 function keyReleased() {
   if (keyCode === 8) {
     keyHeld = false;
+    backspaceTimer.reset();
+  }
+  if (keyCode === 17) {
+    ctrlHeld = false;
   }
 }
 
+function backspaceKey() {
+  letterCounter--;
+  wrongKeysCounter--;
+  stroke("yellow");
+
+  push();
+  stroke(60);
+  strokeWeight(2.5);
+  line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+  pop();
+  
+  console.log(endingPosition);
+  dx += -1 * theTextWidthArray[letterCounter] - 2;
+  if (dx === -1 * (theTextWidthArray[letterCounter] + 2) && thePrompt[letterCounter] === " ") {
+    dy -= 40;
+    dx = endingPosition;
+    console.log(dx);
+  }
+  line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+  compareKeys[letterCounter].state = "neutral";
+}
+
 function displayPrompt() {
+  letterCounter = 0;
   thePrompt = [];
   background(60);
   x = 200;
