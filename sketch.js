@@ -34,7 +34,6 @@ class Letter {
     }
     else if (this.state === "incorrect") {
       fill("red");
-      // css styling for underline?
       push();
       stroke("red");
       strokeWeight(0.5);
@@ -116,7 +115,7 @@ function draw() {
 
   if (ctrlHeld && wrongKeysCounter !== 0) {
     if (keyIsPressed && keyCode === 8) {
-      // pushing backsapce does another thing
+
       push();
       stroke(60);
       strokeWeight(2.5);
@@ -139,7 +138,7 @@ function draw() {
 
 function keyPressed() {
   // moveLine  makes it so special characters don't move
-  let moveLine = false;
+  let moveLine = false; 
 
   if (letterCounter < thePrompt.length && keyIsPressed && (keyCode > 47 && keyCode < 91 || keyCode === 32)) {   
     if (!compareKeys[letterCounter].updateNextLetter() || wrongKeysCounter !== 0) {
@@ -182,6 +181,7 @@ function keyPressed() {
     }
   }
 
+  // ctrl held?
   if (keyCode === 17 && wrongKeysCounter !== 0) {
     ctrlHeld = true;
   }
