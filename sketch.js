@@ -42,7 +42,9 @@ class Letter {
     }
     textSize(this.letterSize);
     textFont(this.textFont);
+
     text(this.array[this.index], this.x, this.y);
+
   }
 
   updateNextLetter() {
@@ -86,9 +88,12 @@ let endingPosition;
 let keyHeld;
 let backspaceTimer;
 let ctrlHeld;
+let beginTime, endTime;
+let correctTypedCounter, totalTypedCounter;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  background(60);
   
   startButton = createButton("Start");
   startButton.position(100, 100);
@@ -98,6 +103,8 @@ function setup() {
 }
 
 // DIFFERENT PAGES - STATES
+// WPM = (entries typed / 5) / time in minutes
+// thePrompt.length is equal to letter counter at the end
 function draw() {
   if (letterCounter === 0 && buttonClicked) {
     stroke("yellow");
@@ -154,6 +161,13 @@ function keyPressed() {
 
     letterCounter++;
     moveLine = true;
+  }
+
+  if (letterCounter === 1) {
+    beginTime = millis();
+  }
+  if (letterCounter === thePrompt.length && compareKeys[letterCounter - 1].state === "correct") {
+    endTime = millis();
   }
 
   // right key
@@ -225,11 +239,19 @@ function backspaceKey() {
 }
 
 function displayPrompt() {
+  background(60);
+  // resetting stuff
   letterCounter = 0;
   thePrompt = [];
-  background(60);
+  compareKeys.splice(0, compareKeys.length);
+  theTextWidthArray.splice(0, theTextWidthArray.length);
   x = 200;
   y = 200;
+  dx = 0;
+  dy = 0;
+  wrongKeysCounter = 0;
+
+  // new stuff
   promptIndex = Math.floor(random(promptArray.length));
   showPrompt(promptIndex);
   buttonClicked = true;
