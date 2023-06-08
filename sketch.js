@@ -89,7 +89,8 @@ let keyHeld;
 let backspaceTimer;
 let ctrlHeld;
 let beginTime, endTime;
-let correctTypedCounter, totalTypedCounter;
+let totalTypedCounter = 0;
+let wpm = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -98,12 +99,11 @@ function setup() {
   startButton = createButton("Start");
   startButton.position(100, 100);
   startButton.mousePressed(displayPrompt);
-
+  
   backspaceTimer = new Timer(350);
 }
 
 // DIFFERENT PAGES - STATES
-// WPM = (entries typed / 5) / time in minutes
 // thePrompt.length is equal to letter counter at the end
 function draw() {
   if (letterCounter === 0 && buttonClicked) {
@@ -119,7 +119,6 @@ function draw() {
   if (keyHeld && wrongKeysCounter !== 0 && backspaceTimer.expired()) {
     backspaceKey();
   }
-
   if (ctrlHeld && wrongKeysCounter !== 0) {
     if (keyIsPressed && keyCode === 8) {
 
@@ -141,7 +140,12 @@ function draw() {
       }
     }
   }
+  wpm = (letterCounter/5) / ((millis() - beginTime) / 60000);
+  console.log(wpm);
 }
+
+// WPM = (entries typed / 5) / time in minutes
+
 
 function keyPressed() {
   // moveLine  makes it so special characters don't move
@@ -158,7 +162,6 @@ function keyPressed() {
     else {
       compareKeys[letterCounter].state = "incorrect";
     }
-
     letterCounter++;
     moveLine = true;
   }
@@ -166,6 +169,7 @@ function keyPressed() {
   if (letterCounter === 1) {
     beginTime = millis();
   }
+  // this might break
   if (letterCounter === thePrompt.length && compareKeys[letterCounter - 1].state === "correct") {
     endTime = millis();
   }
@@ -195,7 +199,7 @@ function keyPressed() {
     }
   }
 
-  // ctrl held?
+  // ctrl held
   if (keyCode === 17 && wrongKeysCounter !== 0) {
     ctrlHeld = true;
   }
