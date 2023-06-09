@@ -89,6 +89,7 @@ let keyHeld;
 let backspaceTimer;
 let ctrlHeld;
 let beginTime, endTime;
+let correctTypedCounter = 0;
 let totalTypedCounter = 0;
 let wpm = 0;
 
@@ -100,6 +101,7 @@ function setup() {
   startButton.position(100, 100);
   startButton.mousePressed(displayPrompt);
   
+  // eslint-disable-next-line no-undef
   backspaceTimer = new Timer(350);
 }
 
@@ -140,12 +142,25 @@ function draw() {
       }
     }
   }
-  wpm = (letterCounter/5) / ((millis() - beginTime) / 60000);
+  wpm = Math.round(correctTypedCounter / 5 / ((millis() - beginTime) / 60000));
   console.log(wpm);
+  push();
+
+  push();
+  noStroke();
+  fill(60);
+  rect(570, 70, 500, 100);
+  pop();
+
+  fill(250, 200, 140);
+  textSize(20);
+  if (wpm > 0) {
+    text("WPM: " + wpm, 600, 100);
+  }
+  pop();
 }
 
 // WPM = (entries typed / 5) / time in minutes
-
 
 function keyPressed() {
   // moveLine  makes it so special characters don't move
@@ -158,6 +173,7 @@ function keyPressed() {
 
     if (wrongKeysCounter === 0) {
       compareKeys[letterCounter].updateNextLetter();
+      correctTypedCounter++;
     }
     else {
       compareKeys[letterCounter].state = "incorrect";
