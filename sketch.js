@@ -73,9 +73,6 @@ let thePrompt = []; // each individual letter in the prompt
 let lowercaseLetters = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 let upercaseLetters = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 let punctuation = ["!", "'", "#", "$", "%", "&", "\"", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@"];
-let x, y;
-let startButton;
-let promptIndex;
 let buttonClicked = false;
 let letterCounter = 0;
 let theTextWidthArray = [];
@@ -84,14 +81,11 @@ let dy = 0;
 let correctDx = 0;
 let correctDy = 0;
 let wrongKeysCounter = 0;
-let endingPosition;
-let keyHeld;
-let backspaceTimer;
-let ctrlHeld;
-let beginTime, endTime;
 let correctTypedCounter = 0;
 let totalTypedCounter = 0;
 let wpm = 0;
+let x, y, endingPosition, keyHeld, backspaceTimer, ctrlHeld, beginTime, endTime, startButton, promptIndex;
+let finishedTyping = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -108,19 +102,30 @@ function setup() {
 // DIFFERENT PAGES - STATES
 // thePrompt.length is equal to letter counter at the end
 function draw() {
-  if (letterCounter === 0 && buttonClicked) {
+  // blinking line
+  if (letterCounter === 0 && buttonClicked && millis() % 1000 < 500) {
     stroke("yellow");
     line(200, 200 + 1, 200, 200 - 15);
   }
+  else {
+    stroke(60);
+    line(200, 200 + 1, 200, 200 - 15);
+  }
+
+  // displaying keys
   if (buttonClicked) {
     for (let keys in compareKeys) {
       smooth();
       compareKeys[keys].display();
     }
   }
+
+  // backspace thing
   if (keyHeld && wrongKeysCounter !== 0 && backspaceTimer.expired()) {
     backspaceKey();
   }
+
+  // ctrl backspace
   if (ctrlHeld && wrongKeysCounter !== 0) {
     if (keyIsPressed && keyCode === 8) {
 
@@ -142,25 +147,12 @@ function draw() {
       }
     }
   }
-  wpm = Math.round(correctTypedCounter / 5 / ((millis() - beginTime) / 60000));
-  console.log(wpm);
-  push();
 
-  push();
-  noStroke();
-  fill(60);
-  rect(570, 70, 500, 100);
-  pop();
-
-  fill(250, 200, 140);
-  textSize(20);
-  if (wpm > 0) {
-    text("WPM: " + wpm, 600, 100);
+  if (letterCounter === thePrompt.length) { 
+    finishedTyping = true;
   }
-  pop();
 }
 
-// WPM = (entries typed / 5) / time in minutes
 
 function keyPressed() {
   // moveLine  makes it so special characters don't move
@@ -213,6 +205,26 @@ function keyPressed() {
       correctDx = dx;
       correctDy = dy;
     }
+
+    // wpm stuff
+    wpm = Math.round(correctTypedCounter / 4.5 / ((millis() - beginTime) / 60000));
+
+    push();
+  
+    push();
+    noStroke();
+    fill(60);
+    rect(570, 70, 500, 100);
+    pop();
+    
+    noStroke();
+    fill(250, 200, 140);
+    textSize(20);
+    if (wpm > 0) {
+      text("WPM: " + wpm, 600, 100);
+    }
+    
+    pop();
   }
 
   // ctrl held
@@ -305,7 +317,5 @@ function showPrompt(u) {
     else {
       x += theTextWidthArray[i] + 2;
     }
-
   }
-
 }
