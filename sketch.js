@@ -105,7 +105,7 @@ function setup() {
   background(60);
   
   startButton = createButton("Start");
-  startButton.position(100, 100);
+  startButton.position(100, 200);
   startButton.mousePressed(displayPrompt);
   
   // eslint-disable-next-line no-undef
@@ -224,14 +224,15 @@ function keyPressed() {
     push();
     noStroke();
     fill(60);
-    rect(570, 70, 500, 100);
+    rectMode(CORNER);
+    rect(200, 130, 150, 25);
     pop();
     
     noStroke();
     fill(250, 200, 140);
     textSize(20);
     if (wpm > 0) {
-      text("WPM: " + wpm, 600, 100);
+      text("WPM: " + wpm, 200, 150);
     }
     
     pop();
@@ -265,9 +266,13 @@ function statsPage() {
   accuracy = Math.round((correctTypedCounter / totalTypedCounter) * 100);
   incorrect = totalTypedCounter - correctTypedCounter;
 
-  text("WPM: " + wpm, 200, 80);
-  text("Accuracy: " + accuracy + "%", 200, 100);
-  text("Correct/Incorrect: " + correctTypedCounter + "/" + incorrect, 200, 120);
+  push();
+  textAlign(LEFT)
+  textSize(25);
+  text("WPM: " + wpm, width/4 - 50, height/4 - 40);
+  text("Accuracy: " + accuracy + "%", width/4 - 50, height/4);
+  text("Correct/Incorrect: " + correctTypedCounter + "/" + incorrect, width/4 - 50, height/4 + 40);
+  pop();
 
   if (highScores.length === 0 && !hasSorted) {
     highScores.push(wpm);
@@ -283,6 +288,36 @@ function statsPage() {
   }
   hasSorted = true;
   localStorage.setItem("high scores", JSON.stringify(highScores));
+
+  let barWidth = (width / 3) / 5;
+  
+  // Draw bars for each high score
+  for (let i = 0; i < highScores.length; i++) {
+    let barX = i * barWidth + width/2;
+    let barY = height/2 + 50;
+    let barHeight = map(highScores[i], 0, max(highScores), 0, -height / 2 + 100);
+
+    // Set a different color for the current high score bar
+    if (i === 0) {
+      fill("yellow"); 
+    } else {
+      fill(130); 
+    }
+    
+    // Draw the bar
+    rect(barX, barY, barWidth, barHeight);
+    
+    // Display the score value above the bar
+    push();
+    textAlign(CENTER);
+    text(highScores[i], barX + barWidth / 2, barY + 20);
+    pop();
+  }
+  push()
+  textSize(30);
+  textAlign(CENTER);
+  text("LEADERBOARD", width/2 + barWidth * 2.5, height/2 + 125);
+  pop();
 }
 
 function selectionSort(aList) {
