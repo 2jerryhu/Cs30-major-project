@@ -95,7 +95,7 @@ let wpm = 0;
 let rawWpm = 0;
 let accuracy = 0;
 let incorrect = 0;
-let x, y, endingPosition, keyHeld, backspaceTimer, ctrlHeld, beginTime, endTime, startButton, promptIndex;
+let x, y, endingPosition, keyHeld, backspaceTimer, ctrlHeld, beginTime, startButton, promptIndex;
 let finishedTyping = false;
 let buttonClicked = false;
 let hasSorted = false;
@@ -160,7 +160,7 @@ function draw() {
     }
   }
 
-  if (buttonClicked && letterCounter === thePrompt.length) { 
+  if (buttonClicked && letterCounter === thePrompt.length && compareKeys[thePrompt.length - 1].state === "correct") { 
     finishedTyping = true;
     statsPage();
   }
@@ -190,10 +190,6 @@ function keyPressed() {
 
   if (letterCounter === 1) {
     beginTime = millis();
-  }
-  // this might break
-  if (letterCounter === thePrompt.length && compareKeys[letterCounter - 1].state === "correct") {
-    endTime = millis();
   }
 
   // right key
