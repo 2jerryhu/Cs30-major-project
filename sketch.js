@@ -4,7 +4,6 @@
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
-// use p5play?
 
 // !!!!!  Text width, font kerning !!!!!!!!!!
 
@@ -69,13 +68,22 @@ function preload() {
 let promptArray = []; // array that stores prompts
 let compareKeys = []; // array that stores each key class
 let thePrompt = []; // each individual letter in the prompt
+let theTextWidthArray = [];
 // combine these arrays when not lazy
 let lowercaseLetters = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 let upercaseLetters = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 let punctuation = ["!", "'", "#", "$", "%", "&", "\"", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@"];
-let buttonClicked = false;
+let highScores;
+
+if (localStorage.getItem("high scores") === null) {
+  highScores = [];
+  localStorage.setItem("high scores", JSON.stringify(highScores));
+}
+else {
+  highScores = JSON.parse(localStorage.getItem("high scores"));
+}
+
 let letterCounter = 0;
-let theTextWidthArray = [];
 let dx = 0;
 let dy = 0;
 let correctDx = 0;
@@ -84,8 +92,13 @@ let wrongKeysCounter = 0;
 let correctTypedCounter = 0;
 let totalTypedCounter = 0;
 let wpm = 0;
+let rawWpm = 0;
+let accuracy = 0;
+let incorrect = 0;
 let x, y, endingPosition, keyHeld, backspaceTimer, ctrlHeld, beginTime, endTime, startButton, promptIndex;
 let finishedTyping = false;
+let buttonClicked = false;
+let hasSorted = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -99,7 +112,6 @@ function setup() {
   backspaceTimer = new Timer(350);
 }
 
-// DIFFERENT PAGES - STATES
 // thePrompt.length is equal to letter counter at the end
 function draw() {
   // blinking line
@@ -113,7 +125,7 @@ function draw() {
   }
 
   // displaying keys
-  if (buttonClicked) {
+  if (buttonClicked && !finishedTyping) {
     for (let keys in compareKeys) {
       smooth();
       compareKeys[keys].display();
@@ -148,8 +160,9 @@ function draw() {
     }
   }
 
-  if (letterCounter === thePrompt.length) { 
+  if (buttonClicked && letterCounter === thePrompt.length) { 
     finishedTyping = true;
+    statsPage();
   }
 }
 
@@ -171,6 +184,7 @@ function keyPressed() {
       compareKeys[letterCounter].state = "incorrect";
     }
     letterCounter++;
+    totalTypedCounter++;
     moveLine = true;
   }
 
@@ -250,6 +264,51 @@ function keyReleased() {
   }
 }
 
+function statsPage() {
+  background(60);
+  accuracy = Math.round((correctTypedCounter / totalTypedCounter) * 100);
+  incorrect = totalTypedCounter - correctTypedCounter;
+
+  text("WPM: " + wpm, 200, 80);
+  text("Accuracy: " + accuracy + "%", 200, 100);
+  text("Correct/Incorrect: " + correctTypedCounter + "/" + incorrect, 200, 120);
+
+  if (highScores.length === 0 && !hasSorted) {
+    highScores.push(wpm);
+  }
+  else if (highScores.length < 5 && !hasSorted) {
+    highScores.push(wpm);
+    selectionSort(highScores);
+  }
+  else if (highScores.length === 5 && !hasSorted) {
+    highScores.push(wpm);
+    selectionSort(highScores);
+    highScores.pop();
+  }
+  hasSorted = true;
+  localStorage.setItem("high scores", JSON.stringify(highScores));
+}
+
+function selectionSort(aList) {
+  let swapLocation = 0;
+  
+  while (swapLocation < aList.length - 1) {
+    let largestLocation = swapLocation;
+    
+    for (let i = swapLocation + 1; i < aList.length; i++) {
+      if (aList[i] > aList[largestLocation]) {
+        largestLocation = i;
+      }
+    }
+    
+    let tempValue = aList[swapLocation];
+    aList[swapLocation] = aList[largestLocation];
+    aList[largestLocation] = tempValue;
+    
+    swapLocation++;
+  }
+}
+
 function backspaceKey() {
   letterCounter--;
   wrongKeysCounter--;
@@ -263,7 +322,7 @@ function backspaceKey() {
   
   dx += -1 * theTextWidthArray[letterCounter] - 2;
   if (dx === -1 * (theTextWidthArray[letterCounter] + 2) && thePrompt[letterCounter] === " ") {
-    dy -= 40;
+    dy -= 40; 
     dx = endingPosition;
   }
   line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
@@ -273,6 +332,8 @@ function backspaceKey() {
 function displayPrompt() {
   background(60);
   // resetting stuff
+  finishedTyping = false;
+  hasSorted = false;
   letterCounter = 0;
   thePrompt = [];
   compareKeys.splice(0, compareKeys.length);
@@ -282,6 +343,8 @@ function displayPrompt() {
   dx = 0;
   dy = 0;
   wrongKeysCounter = 0;
+  correctTypedCounter = 0;
+  totalTypedCounter = 0;
 
   // new stuff
   promptIndex = Math.floor(random(promptArray.length));
