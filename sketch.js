@@ -112,7 +112,6 @@ function setup() {
   backspaceTimer = new Timer(350);
 }
 
-// thePrompt.length is equal to letter counter at the end
 function draw() {
   // blinking line
   if (letterCounter === 0 && buttonClicked && millis() % 1000 < 500) {
@@ -132,7 +131,7 @@ function draw() {
     }
   }
 
-  // backspace thing
+  // backspace holding
   if (keyHeld && wrongKeysCounter !== 0 && backspaceTimer.expired()) {
     backspaceKey();
   }
@@ -261,6 +260,26 @@ function keyReleased() {
   }
 }
 
+function backspaceKey() {
+  letterCounter--;
+  wrongKeysCounter--;
+  stroke("yellow");
+
+  push();
+  stroke(60);
+  strokeWeight(2.5);
+  line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+  pop();
+  
+  dx += -1 * theTextWidthArray[letterCounter] - 2;
+  if (dx === -1 * (theTextWidthArray[letterCounter] + 2) && thePrompt[letterCounter] === " ") {
+    dy -= 40; 
+    dx = endingPosition;
+  }
+  line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+  compareKeys[letterCounter].state = "neutral";
+}
+
 function statsPage() {
   background(60);
   accuracy = Math.round((correctTypedCounter / totalTypedCounter) * 100);
@@ -338,26 +357,6 @@ function selectionSort(aList) {
     
     swapLocation++;
   }
-}
-
-function backspaceKey() {
-  letterCounter--;
-  wrongKeysCounter--;
-  stroke("yellow");
-
-  push();
-  stroke(60);
-  strokeWeight(2.5);
-  line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
-  pop();
-  
-  dx += -1 * theTextWidthArray[letterCounter] - 2;
-  if (dx === -1 * (theTextWidthArray[letterCounter] + 2) && thePrompt[letterCounter] === " ") {
-    dy -= 40; 
-    dx = endingPosition;
-  }
-  line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
-  compareKeys[letterCounter].state = "neutral";
 }
 
 function displayPrompt() {
