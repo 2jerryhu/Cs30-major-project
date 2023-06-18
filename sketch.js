@@ -51,7 +51,6 @@ class Letter {
       this.state = "correct";
       return true;
     }
-    // search up special characters
     else if (key !== this.array[this.index] && keyIsPressed && keyCode > 47 && keyCode < 91 || keyCode === 32) {
       this.state = "incorrect";
       return false;
@@ -69,10 +68,10 @@ let promptArray = []; // array that stores prompts
 let compareKeys = []; // array that stores each key class
 let thePrompt = []; // each individual letter in the prompt
 let theTextWidthArray = [];
-// combine these arrays when not lazy
-let lowercaseLetters = [" ", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-let upercaseLetters = [" ", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
-let punctuation = ["!", "'", "#", "$", "%", "&", "\"", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@"];
+let characters = [" ", "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", "0", "1", "2", "3", "4", "5", "6", "7", "8", 
+"9",":", ";", "<", "=", ">", "?", "@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", 
+"V", "W", "X", "Y", "Z", "[", "\\", "]", "^", "_", "`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", 
+"r", "s", "t", "u", "v", "w", "x", "y", "z"];
 let highScores;
 
 if (localStorage.getItem("high scores") === null) {
@@ -105,7 +104,7 @@ function setup() {
   background(60);
   
   startButton = createButton("Start");
-  startButton.position(100, 200);
+  startButton.position(100, 180);
   startButton.mousePressed(displayPrompt);
   
   // eslint-disable-next-line no-undef
@@ -113,14 +112,39 @@ function setup() {
 }
 
 function draw() {
+  push();
+  fill("yellow");
+  textFont("cambria");
+  textSize(60);
+  textAlign(CENTER);
+  text("HuType", width/2, 80);
+  pop();
+
+  if (!buttonClicked) {
+    push();
+    fill(130);
+    textFont("cambria");
+    textSize(40);
+    textAlign(CENTER);
+    text("Welcome to HuType!", width/2, height/2 - 200);
+
+    push()
+    textSize(30);
+    text("Type as quickly as you can in the alotted time, or until the prompt ends.", width/2, height/2 - 140);
+    text("Click 'start' when ready or to restart a test.", width/2, height/2 - 100);
+    text("Shortcut: Hit ctrl + backspace to delete all incorrect words", width/2, height/2 - 60);
+    pop();
+    pop();
+  }
+
   // blinking line
   if (letterCounter === 0 && buttonClicked && millis() % 1000 < 500) {
     stroke("yellow");
-    line(200, 200 + 1, 200, 200 - 15);
+    line(200, 300 + 1, 200, 300 - 15);
   }
   else {
     stroke(60);
-    line(200, 200 + 1, 200, 200 - 15);
+    line(200, 300 + 1, 200, 300 - 15);
   }
 
   // displaying keys
@@ -143,11 +167,11 @@ function draw() {
       push();
       stroke(60);
       strokeWeight(2.5);
-      line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+      line(200 + dx, 300 + 1 + dy, 200 + dx, 300 - 15 + dy);
       pop();
 
       stroke("yellow");
-      line(200 + correctDx, 200 + 1 + correctDy, 200 + correctDx, 200 - 15 + correctDy);
+      line(200 + correctDx, 300 + 1 + correctDy, 200 + correctDx, 300 - 15 + correctDy);
       dx = correctDx;
       dy = correctDy;
 
@@ -198,7 +222,7 @@ function keyPressed() {
     push();
     stroke(60);
     strokeWeight(2.5);
-    line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+    line(200 + dx, 300 + 1 + dy, 200 + dx, 300 - 15 + dy);
     pop();
 
     if (200 + dx >= windowWidth - 160 && thePrompt[letterCounter - 1] === " ") {
@@ -208,7 +232,7 @@ function keyPressed() {
     }
 
     dx += theTextWidthArray[letterCounter - 1] + 2;
-    line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+    line(200 + dx, 300 + 1 + dy, 200 + dx, 300 - 15 + dy);
 
     if (compareKeys[letterCounter - 1].state === "correct" && letterCounter > 0) {
       correctDx = dx;
@@ -224,14 +248,14 @@ function keyPressed() {
     noStroke();
     fill(60);
     rectMode(CORNER);
-    rect(200, 130, 150, 25);
+    rect(200, 230, 150, 25);
     pop();
     
     noStroke();
     fill(250, 200, 140);
     textSize(20);
     if (wpm > 0) {
-      text("WPM: " + wpm, 200, 150);
+      text("WPM: " + wpm, 200, 250);
     }
     
     pop();
@@ -268,7 +292,7 @@ function backspaceKey() {
   push();
   stroke(60);
   strokeWeight(2.5);
-  line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+  line(200 + dx, 300 + 1 + dy, 200 + dx, 300 - 15 + dy);
   pop();
   
   dx += -1 * theTextWidthArray[letterCounter] - 2;
@@ -276,19 +300,36 @@ function backspaceKey() {
     dy -= 40; 
     dx = endingPosition;
   }
-  line(200 + dx, 200 + 1 + dy, 200 + dx, 200 - 15 + dy);
+  line(200 + dx, 300 + 1 + dy, 200 + dx, 300 - 15 + dy);
   compareKeys[letterCounter].state = "neutral";
 }
 
 function statsPage() {
   background(60);
+  push()
+  fill("yellow");
+  textFont("cambria");
+  textSize(60);
+  textAlign(CENTER);
+  text("HuType", width/2, 80);
+  pop()
   accuracy = Math.round((correctTypedCounter / totalTypedCounter) * 100);
   incorrect = totalTypedCounter - correctTypedCounter;
 
   push();
   textAlign(LEFT)
   textSize(25);
-  text("WPM: " + wpm, width/4 - 50, height/4 - 40);
+
+  if (wpm > highScores[0] && highScores.length > 1) {
+    push()
+    fill("yellow");    
+    text("WPM: " + wpm, width/4 - 50, height/4 - 40);
+    pop();
+  }
+  else {
+    text("WPM: " + wpm, width/4 - 50, height/4 - 40);
+  }
+
   text("Accuracy: " + accuracy + "%", width/4 - 50, height/4);
   text("Correct/Incorrect: " + correctTypedCounter + "/" + incorrect, width/4 - 50, height/4 + 40);
   pop();
@@ -369,7 +410,7 @@ function displayPrompt() {
   compareKeys.splice(0, compareKeys.length);
   theTextWidthArray.splice(0, theTextWidthArray.length);
   x = 200;
-  y = 200;
+  y = 300;
   dx = 0;
   dy = 0;
   wrongKeysCounter = 0;
@@ -386,16 +427,10 @@ function displayPrompt() {
 function showPrompt(u) {
   for (let i = 0; i < promptArray[u][0].length; i++) {
     let letterNumber = 0;
-
-    if (promptArray[u][0][i].charCodeAt(0) === 32) {
-      letterNumber = 0;
-    }
-    else {
-      letterNumber = promptArray[u][0][i].charCodeAt(0) - 96;
-    }
+    letterNumber = promptArray[u][0][i].charCodeAt(0) - 32;
     
-    // compare typed letter with displayed letter
-    let thisKey = new Letter(x, y, lowercaseLetters, letterNumber, "neutral"); 
+    
+    let thisKey = new Letter(x, y, characters, letterNumber, "neutral"); 
     
     compareKeys.push(thisKey);
     thePrompt.push(promptArray[u][0][i]); 
