@@ -107,6 +107,7 @@ let rawWpm = 0;
 let accuracy = 0;
 let incorrect = 0;
 let x, y, endingPosition, keyHeld, backspaceTimer, ctrlHeld, beginTime, startButton, instantDeathButton, randomButton, quoteButton, promptIndex;
+let timerStart, timerEnd;
 let finishedTyping = false;
 let buttonClicked = false;
 let hasSorted = false;
@@ -136,22 +137,7 @@ function setup() {
   quoteButton.mousePressed(togglePrompt);
   quoteButton.style('background-color', 'yellow');
 
-  // eslint-disable-next-line no-undef
   backspaceTimer = new Timer(350);
-}
-
-function togglePrompt() {
-  randomToggle = !randomToggle;
-  quoteToggle = !quoteToggle;
-  
-  if (!quoteToggle) {
-    randomButton.style('background-color', 'yellow');
-    quoteButton.style('background-color', 'white');
-  } 
-  else {
-    randomButton.style('background-color', 'white');
-    quoteButton.style('background-color', 'yellow');
-  }
 }
 
 function draw() {
@@ -209,8 +195,16 @@ function draw() {
       smooth();
       compareKeys[keys].display();
     }
+    }
+  
+  if (randomToggle && letterCounter > 0) {
+    timerStart = millis();
+    timerEnd = millis() + 15000;
+    if (timerEnd !== millis()) {
+      console.log("bello");
+    }
   }
-
+  
   // backspace holding
   if (keyHeld && wrongKeysCounter !== 0 && backspaceTimer.expired()) {
     backspaceKey();
@@ -474,8 +468,13 @@ function displayPrompt() {
   totalTypedCounter = 0;
 
   // new stuff
-  promptIndex = Math.floor(random(promptArray.length));
-  showPrompt(promptIndex);
+  if (quoteToggle) {
+    promptIndex = Math.floor(random(promptArray.length));
+    showPrompt(promptIndex);
+  }
+  else if (randomToggle) {
+    showRandomPrompt();
+  }
 
   buttonClicked = true;
 }
@@ -485,8 +484,23 @@ function toggleColor() {
   
   if (deathToggle) {
     instantDeathButton.style('background-color', 'red');
-  } else {
+  } 
+  else {
     instantDeathButton.style('background-color', 'white');
+  }
+}
+
+function togglePrompt() {
+  randomToggle = !randomToggle;
+  quoteToggle = !quoteToggle;
+  
+  if (!quoteToggle) {
+    randomButton.style('background-color', 'yellow');
+    quoteButton.style('background-color', 'white');
+  } 
+  else {
+    randomButton.style('background-color', 'white');
+    quoteButton.style('background-color', 'yellow');
   }
 }
 
@@ -509,6 +523,45 @@ function showPrompt(u) {
     }
     else {
       x += theTextWidthArray[i] + 2;
+    }
+  }
+}
+
+function showRandomPrompt() {
+  for (let u = 0; u < 100; u++) {
+    let wordIndex = Math.floor(random(workBank.length));
+
+    for (let i = 0; i < workBank[wordIndex].length + 1; i++) {
+      if (i !== workBank[wordIndex].length) {
+        let letterNumber = 0;
+        letterNumber = workBank[wordIndex].charCodeAt(i) - 32;
+        
+        let thisKey = new Letter(x, y, characters, letterNumber, "neutral"); 
+        
+        compareKeys.push(thisKey);
+        thePrompt.push(workBank[wordIndex][i]); 
+        compareKeys[i].display(130);
+        
+        theTextWidthArray.push(textWidth(characters[letterNumber]));
+        x += textWidth(characters[letterNumber]) + 2;
+      }
+      else if (u !== 99) {
+        let thisKey = new Letter(x, y, characters, 0, "neutral"); 
+
+        compareKeys.push(thisKey);
+        thePrompt.push(" "); 
+        compareKeys[i].display(130);
+
+        theTextWidthArray.push(textWidth(" "));
+
+        if (x >= windowWidth - 160)  {
+          y += 40;
+          x = 200;
+        }
+        else {
+          x += textWidth(" ") + 2;
+        }
+      }
     }
   }
 }
