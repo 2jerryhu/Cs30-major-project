@@ -61,17 +61,29 @@ class Letter {
 function preload() {
   promptArray.push(loadStrings("assets/forsty-the-snowman.txt"));
   promptArray.push(loadStrings("assets/be-or-not.txt"));
+  promptArray.push(loadStrings("assets/ultron.txt"));
+  promptArray.push(loadStrings("assets/sam-lotr.txt"));
+  promptArray.push(loadStrings("assets/gatsby.txt"));
 }
 
 // ASCII
 let promptArray = []; // array that stores prompts
 let compareKeys = []; // array that stores each key class
 let thePrompt = []; // each individual letter in the prompt
-let theTextWidthArray = [];
+let theTextWidthArray = []; // stores the text width of each key
 let characters = [" ", "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", "0", "1", "2", "3", "4", "5", "6", "7", "8", 
 "9",":", ";", "<", "=", ">", "?", "@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", 
 "V", "W", "X", "Y", "Z", "[", "\\", "]", "^", "_", "`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", 
 "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+let workBank = ["the", "be", "of", "and", "a", "to", "in", "he", "have", "it", "that", "for", "they", "with", "as", "not", "on", "she", "at",
+"by", "this", "we", "you", "do", "but", "from", "or", "which", "one", "would", "all", "will", "there", "say", "who", "make", "when", "can",
+"more", "if", "no", "man", "out", "other", "so", "what", "time", "up", "go", "about", "than", "into", "could", "state", "only", "new", "year",
+"some", "take", "come", "these", "know", "see", "use", "get", "like", "then", "first", "any", "work", "now", "may", "such", "give", "over", "think",
+"most", "even", "find", "day", "also", "after", "way", "many", "must", "look", "before", "great", "back", "through", "long", "where", "much",
+"should", "well", "people", "down", "out", "own", "just", "because", "good", "each", "those", "feel", "seem", "how", "high", "too", "place",
+"litte", "world", "very", "still", "nation", "hand", "old", "life", "tell", "write", "become", "here", "show", "house", "both", "between", "need",
+"mean", "call", "develop", "under", "last", "right", "move", "thing", "general", "school", "never", "same", "another", "begin", "while", "number",
+"part", "turn", "real"]
 let highScores;
 
 if (localStorage.getItem("high scores") === null) {
@@ -94,21 +106,52 @@ let wpm = 0;
 let rawWpm = 0;
 let accuracy = 0;
 let incorrect = 0;
-let x, y, endingPosition, keyHeld, backspaceTimer, ctrlHeld, beginTime, startButton, promptIndex;
+let x, y, endingPosition, keyHeld, backspaceTimer, ctrlHeld, beginTime, startButton, instantDeathButton, randomButton, quoteButton, promptIndex;
 let finishedTyping = false;
 let buttonClicked = false;
 let hasSorted = false;
+let deathToggle = false;
+let randomToggle = false;
+let quoteToggle = true;
+let dead = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   background(60);
   
   startButton = createButton("Start");
-  startButton.position(100, 180);
+  startButton.position(50, 140);
   startButton.mousePressed(displayPrompt);
   
+  instantDeathButton = createButton('Instant Death Mode');
+  instantDeathButton.position(10, 180);
+  instantDeathButton.mousePressed(toggleColor);
+
+  randomButton = createButton("Random Prompt");
+  randomButton.position(20, 220);
+  randomButton.mousePressed(togglePrompt);
+
+  quoteButton = createButton("Text Quote");
+  quoteButton.position(30, 260);
+  quoteButton.mousePressed(togglePrompt);
+  quoteButton.style('background-color', 'yellow');
+
   // eslint-disable-next-line no-undef
   backspaceTimer = new Timer(350);
+}
+
+function togglePrompt() {
+  randomToggle = !randomToggle;
+  quoteToggle = !quoteToggle;
+  
+  if (!quoteToggle) {
+    randomButton.style('background-color', 'yellow');
+    quoteButton.style('background-color', 'white');
+  } 
+  else {
+    randomButton.style('background-color', 'white');
+    quoteButton.style('background-color', 'yellow');
+  }
 }
 
 function draw() {
@@ -131,9 +174,22 @@ function draw() {
     push()
     textSize(30);
     text("Type as quickly as you can in the alotted time, or until the prompt ends.", width/2, height/2 - 140);
-    text("Click 'start' when ready or to restart a test.", width/2, height/2 - 100);
-    text("Shortcut: Hit ctrl + backspace to delete all incorrect words", width/2, height/2 - 60);
+    text("Select the desired mode, and then click 'start' when ready or to restart a test.", width/2, height/2 - 100);
+    text("Aim for perfect accuracy in Instant Death Mode.", width/2, height/2 - 60);
+    text("Shortcut: Hit ctrl + backspace to delete all incorrect words", width/2, height/2 - 20);
     pop();
+    pop();
+  }
+
+  if (deathToggle && wrongKeysCounter > 0) {
+    dead = true;
+    push();
+    noStroke();
+    fill("red");
+    textFont("cambria");
+    textSize(40);
+    textAlign(CENTER);
+    text("RESTART", width/2, height/2 - 200);
     pop();
   }
 
@@ -189,12 +245,11 @@ function draw() {
   }
 }
 
-
 function keyPressed() {
   // moveLine  makes it so special characters don't move
   let moveLine = false; 
 
-  if (letterCounter < thePrompt.length && keyIsPressed && (keyCode > 47 && keyCode < 91 || keyCode === 32)) {   
+  if (!dead && letterCounter < thePrompt.length && keyIsPressed && (keyCode > 47 && keyCode < 91 || keyCode > 186 && keyCode < 223 || keyCode === 32)) {   
     if (!compareKeys[letterCounter].updateNextLetter() || wrongKeysCounter !== 0) {
       wrongKeysCounter++;
     }
@@ -405,6 +460,7 @@ function displayPrompt() {
   // resetting stuff
   finishedTyping = false;
   hasSorted = false;
+  dead = false;
   letterCounter = 0;
   thePrompt = [];
   compareKeys.splice(0, compareKeys.length);
@@ -420,15 +476,24 @@ function displayPrompt() {
   // new stuff
   promptIndex = Math.floor(random(promptArray.length));
   showPrompt(promptIndex);
+
   buttonClicked = true;
-  return promptIndex;
+}
+
+function toggleColor() {
+  deathToggle = !deathToggle;
+  
+  if (deathToggle) {
+    instantDeathButton.style('background-color', 'red');
+  } else {
+    instantDeathButton.style('background-color', 'white');
+  }
 }
 
 function showPrompt(u) {
   for (let i = 0; i < promptArray[u][0].length; i++) {
     let letterNumber = 0;
     letterNumber = promptArray[u][0][i].charCodeAt(0) - 32;
-    
     
     let thisKey = new Letter(x, y, characters, letterNumber, "neutral"); 
     

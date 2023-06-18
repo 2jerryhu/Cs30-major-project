@@ -10,7 +10,7 @@ I will be making a typing game. There will be a prompt given on the screen, and 
 - Saving scores on local storage
 - Leaderboard/high score information 
 - Randomly generated prompts
-- Multiple varieties of prompts, ex. with/without punctuation, with numbers, random sting of words, text from books/movies
+- Multiple varieties of prompts, ex. with/without punctuation, with numbers, random string of words, text from books/movies
 - Easy to use and visually appealing UI
 - Instant death mode
 
