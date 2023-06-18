@@ -5,8 +5,6 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-// !!!!!  Text width, font kerning !!!!!!!!!!
-
 class Letter {
   constructor(x, y, array, index, state) {
     this.x = x;
@@ -106,7 +104,7 @@ let wpm = 0;
 let rawWpm = 0;
 let accuracy = 0;
 let incorrect = 0;
-let x, y, endingPosition, keyHeld, backspaceTimer, ctrlHeld, beginTime, startButton, instantDeathButton, randomButton, quoteButton, promptIndex;
+let x, y, endingPosition, keyHeld, backspaceTimer, ctrlHeld, beginTime, startButton, instantDeathButton, randomButton, quoteButton, promptIndex, timer;
 let timerStart, timerEnd;
 let finishedTyping = false;
 let buttonClicked = false;
@@ -115,6 +113,7 @@ let deathToggle = false;
 let randomToggle = false;
 let quoteToggle = true;
 let dead = false;
+let setValues = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -175,7 +174,7 @@ function draw() {
     textFont("cambria");
     textSize(40);
     textAlign(CENTER);
-    text("RESTART", width/2, height/2 - 200);
+    text("RESTART", width/2, height/2 - 300);
     pop();
   }
 
@@ -197,11 +196,37 @@ function draw() {
     }
     }
   
+  // timer
   if (randomToggle && letterCounter > 0) {
-    timerStart = millis();
-    timerEnd = millis() + 15000;
-    if (timerEnd !== millis()) {
-      console.log("bello");
+    if (!setValues) {
+      timerStart = millis();
+      timer = 15;
+      setValues = true;
+    }
+    let elapsed = floor((millis() - timerStart) / 1000);
+    let remaining = timer - elapsed;
+
+    push();
+  
+    push();
+    noStroke();
+    fill(60);
+    rectMode(CORNER);
+    rect(400, 230, 150, 25);
+    pop();
+    
+    noStroke();
+    fill(250, 200, 140);
+    textSize(20);
+    if (remaining > 0) {
+      text(remaining, 400, 250);
+    }
+    
+    pop();
+
+    if (remaining <= 0) {
+      finishedTyping = true;
+      statsPage();
     }
   }
   
@@ -243,7 +268,7 @@ function keyPressed() {
   // moveLine  makes it so special characters don't move
   let moveLine = false; 
 
-  if (!dead && letterCounter < thePrompt.length && keyIsPressed && (keyCode > 47 && keyCode < 91 || keyCode > 186 && keyCode < 223 || keyCode === 32)) {   
+  if (!dead && !finishedTyping && letterCounter < thePrompt.length && keyIsPressed && (keyCode > 47 && keyCode < 91 || keyCode > 186 && keyCode < 223 || keyCode === 32)) {   
     if (!compareKeys[letterCounter].updateNextLetter() || wrongKeysCounter !== 0) {
       wrongKeysCounter++;
     }
@@ -265,7 +290,7 @@ function keyPressed() {
   }
 
   // right key
-  if (letterCounter !== 0 && moveLine) {
+  if (letterCounter !== 0 && moveLine && !finishedTyping) {
     stroke("yellow");
 
     push();
@@ -311,12 +336,12 @@ function keyPressed() {
   }
 
   // ctrl held
-  if (keyCode === 17 && wrongKeysCounter !== 0) {
+  if (keyCode === 17 && !finishedTyping && wrongKeysCounter !== 0) {
     ctrlHeld = true;
   }
 
   // backspace
-  if (keyIsDown && keyCode === 8 && wrongKeysCounter !== 0) {
+  if (keyIsDown && keyCode === 8 && !finishedTyping && wrongKeysCounter !== 0) {
     backspaceKey();
     keyHeld = true;
     backspaceTimer.start();
@@ -455,6 +480,7 @@ function displayPrompt() {
   finishedTyping = false;
   hasSorted = false;
   dead = false;
+  setValues = false;
   letterCounter = 0;
   thePrompt = [];
   compareKeys.splice(0, compareKeys.length);
