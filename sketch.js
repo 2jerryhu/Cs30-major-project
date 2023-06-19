@@ -60,13 +60,19 @@ class Letter {
   }
 }
 
-// This loads various prompts from movies and books. 
+// This loads various prompts from movies and books (some really good movies in here). 
 function preload() {
   promptArray.push(loadStrings("assets/forsty-the-snowman.txt"));
   promptArray.push(loadStrings("assets/be-or-not.txt"));
   promptArray.push(loadStrings("assets/ultron.txt"));
   promptArray.push(loadStrings("assets/sam-lotr.txt"));
   promptArray.push(loadStrings("assets/gatsby.txt"));
+  promptArray.push(loadStrings("assets/gump-ping-pong.txt"));
+  promptArray.push(loadStrings("assets/gump-letter.txt"));
+  promptArray.push(loadStrings("assets/buzz-lightyear.txt"));
+  promptArray.push(loadStrings("assets/ted-lasso.txt"));
+  promptArray.push(loadStrings("assets/ted-lasso-rebecca.txt"));
+  promptArray.push(loadStrings("assets/lotr.txt"));
 }
 
 let promptArray = []; // array that stores prompts
