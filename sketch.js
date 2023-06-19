@@ -1,10 +1,12 @@
-// Project Title
-// Your Name
-// Date
+// HuType (Parody of MonkeyType)
+// Jerry Hu
+// June 19th, 2023
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// I used various concepts not taught in class. One of these was using local storage for a high score system. Another was changing the colors
+// of buttons using html functions.The ASCII table was used to display all of the letters. 
 
+// this is the class that controls all letter displaying and accuracy mechanisms
 class Letter {
   constructor(x, y, array, index, state) {
     this.x = x;
@@ -13,9 +15,10 @@ class Letter {
     this.index = index;
     this.state = state;
     this.letterSize = 20;
-    this.textFont = "cambria";
+    this.textFont = "cambria"; // this is the best font ever
   }
 
+  // The keys flip between states, depending on if they're neutral, correct, or incorrect, which changes their color
   display() {
     noStroke();
     if (this.state === "neutral") {
@@ -44,6 +47,7 @@ class Letter {
 
   }
 
+  // If the key that is pressed is equal to the key displayed, then return true. Else, return false. 
   updateNextLetter() {
     if (key === this.array[this.index] && keyIsPressed) {
       this.state = "correct";
@@ -56,6 +60,7 @@ class Letter {
   }
 }
 
+// This loads various prompts from movies and books. 
 function preload() {
   promptArray.push(loadStrings("assets/forsty-the-snowman.txt"));
   promptArray.push(loadStrings("assets/be-or-not.txt"));
@@ -64,7 +69,6 @@ function preload() {
   promptArray.push(loadStrings("assets/gatsby.txt"));
 }
 
-// ASCII
 let promptArray = []; // array that stores prompts
 let compareKeys = []; // array that stores each key class
 let thePrompt = []; // each individual letter in the prompt
@@ -73,7 +77,7 @@ let characters = [" ", "!", "\"", "#", "$", "%", "&", "'", "(", ")", "*", "+", "
 "9",":", ";", "<", "=", ">", "?", "@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", 
 "V", "W", "X", "Y", "Z", "[", "\\", "]", "^", "_", "`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", 
 "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-let workBank = ["the", "be", "of", "and", "a", "to", "in", "he", "have", "it", "that", "for", "they", "with", "as", "not", "on", "she", "at",
+let wordBank = ["the", "be", "of", "and", "a", "to", "in", "he", "have", "it", "that", "for", "they", "with", "as", "not", "on", "she", "at",
 "by", "this", "we", "you", "do", "but", "from", "or", "which", "one", "would", "all", "will", "there", "say", "who", "make", "when", "can",
 "more", "if", "no", "man", "out", "other", "so", "what", "time", "up", "go", "about", "than", "into", "could", "state", "only", "new", "year",
 "some", "take", "come", "these", "know", "see", "use", "get", "like", "then", "first", "any", "work", "now", "may", "such", "give", "over", "think",
@@ -83,7 +87,7 @@ let workBank = ["the", "be", "of", "and", "a", "to", "in", "he", "have", "it", "
 "mean", "call", "develop", "under", "last", "right", "move", "thing", "general", "school", "never", "same", "another", "begin", "while", "number",
 "part", "turn", "real"]
 let highScores;
-
+// this creates the local storage high score system
 if (localStorage.getItem("high scores") === null) {
   highScores = [];
   localStorage.setItem("high scores", JSON.stringify(highScores));
@@ -105,7 +109,7 @@ let rawWpm = 0;
 let accuracy = 0;
 let incorrect = 0;
 let x, y, endingPosition, keyHeld, backspaceTimer, ctrlHeld, beginTime, startButton, instantDeathButton, randomButton, quoteButton, promptIndex, timer;
-let timerStart, timerEnd;
+// let timerStart; this was originally supposed to be used for the timer, which didn't work out
 let finishedTyping = false;
 let buttonClicked = false;
 let hasSorted = false;
@@ -114,11 +118,13 @@ let randomToggle = false;
 let quoteToggle = true;
 let dead = false;
 let setValues = false;
+let isHighlighted = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   background(60);
   
+  // various buttons needed for various modes
   startButton = createButton("Start");
   startButton.position(50, 140);
   startButton.mousePressed(displayPrompt);
@@ -148,24 +154,27 @@ function draw() {
   text("HuType", width/2, 80);
   pop();
 
+  // introduction text
   if (!buttonClicked) {
     push();
     fill(130);
     textFont("cambria");
     textSize(40);
     textAlign(CENTER);
-    text("Welcome to HuType!", width/2, height/2 - 200);
+    text("Welcome to HuType!", width/2, height/2 - height/4);
 
     push()
     textSize(30);
-    text("Type as quickly as you can in the alotted time, or until the prompt ends.", width/2, height/2 - 140);
-    text("Select the desired mode, and then click 'start' when ready or to restart a test.", width/2, height/2 - 100);
-    text("Aim for perfect accuracy in Instant Death Mode.", width/2, height/2 - 60);
-    text("Shortcut: Hit ctrl + backspace to delete all incorrect words", width/2, height/2 - 20);
+    text("Type as quickly as you can in the alotted time, or until the prompt ends.", width/2, height/2 - height/7.12142857143);
+    text("Select the desired mode, and then click 'start' when ready or to restart a test.", width/2, height/2 - height/9.97);
+    text("Aim for perfect accuracy in Instant Death Mode.", width/2, height/2 - height/16.6166666667);
+    text("Shortcut: Hit ctrl + backspace to delete all incorrect words", width/2, height/2 - height/49.85);
+    text("Shortcut: Hit tab + enter to restart the test quickly", width/2, height/2 + height/49.85);
     pop();
     pop();
   }
 
+  // instant death mode
   if (deathToggle && wrongKeysCounter > 0) {
     dead = true;
     push();
@@ -196,40 +205,48 @@ function draw() {
     }
     }
   
-  // timer
-  if (randomToggle && letterCounter > 0) {
-    if (!setValues) {
-      timerStart = millis();
-      timer = 15;
-      setValues = true;
-    }
-    let elapsed = floor((millis() - timerStart) / 1000);
-    let remaining = timer - elapsed;
+  // timer that didn't work out
+  // if (randomToggle && letterCounter > 0) {
+  //   if (!setValues) {
+  //     timerStart = millis();
+  //     timer = 15;
+  //     setValues = true;
+  //   }
+  //   let elapsed = floor((millis() - timerStart) / 1000);
+  //   let remaining = timer - elapsed;
 
-    push();
+  //   push();
   
-    push();
-    noStroke();
-    fill(60);
-    rectMode(CORNER);
-    rect(400, 230, 150, 25);
-    pop();
+  //   push();
+  //   noStroke();
+  //   fill(60);
+  //   rectMode(CORNER);
+  //   rect(400, 230, 150, 25);
+  //   pop();
     
-    noStroke();
-    fill(250, 200, 140);
-    textSize(20);
-    if (remaining > 0) {
-      text(remaining, 400, 250);
-    }
+  //   noStroke();
+  //   fill(250, 200, 140);
+  //   textSize(20);
+  //   if (remaining > 0) {
+  //     text(remaining, 400, 250);
+  //   }
     
-    pop();
+  //   pop();
 
-    if (remaining <= 0) {
-      finishedTyping = true;
-      statsPage();
-    }
-  }
+  //   if (remaining <= 0) {
+  //     finishedTyping = true;
+  //     statsPage();
+  //   }
+  // }
   
+  // tab - enter shortcut, highlights button when tab is clicked
+  if (isHighlighted) {
+    startButton.style('background-color', 'yellow');
+  } 
+  else {
+    startButton.style('background-color', 'white');
+  } 
+
   // backspace holding
   if (keyHeld && wrongKeysCounter !== 0 && backspaceTimer.expired()) {
     backspaceKey();
@@ -258,6 +275,7 @@ function draw() {
     }
   }
 
+  // when finished typing, go to the stats page
   if (buttonClicked && letterCounter === thePrompt.length && compareKeys[thePrompt.length - 1].state === "correct") { 
     finishedTyping = true;
     statsPage();
@@ -265,14 +283,15 @@ function draw() {
 }
 
 function keyPressed() {
-  // moveLine  makes it so special characters don't move
+  // moveLine  makes it so special characters (like ctrl) don't move the line
   let moveLine = false; 
 
+  // the most important if statement in the program. Controls all the logic of key typing.
   if (!dead && !finishedTyping && letterCounter < thePrompt.length && keyIsPressed && (keyCode > 47 && keyCode < 91 || keyCode > 186 && keyCode < 223 || keyCode === 32)) {   
     if (!compareKeys[letterCounter].updateNextLetter() || wrongKeysCounter !== 0) {
       wrongKeysCounter++;
     }
-
+    // If one key is wrong, then the following keys will be incorrect until they are corrected.
     if (wrongKeysCounter === 0) {
       compareKeys[letterCounter].updateNextLetter();
       correctTypedCounter++;
@@ -285,11 +304,12 @@ function keyPressed() {
     moveLine = true;
   }
 
+  // starting the wpm calculator timer
   if (letterCounter === 1) {
     beginTime = millis();
   }
 
-  // right key
+  // if the correct key is typed, then move the line
   if (letterCounter !== 0 && moveLine && !finishedTyping) {
     stroke("yellow");
 
@@ -299,6 +319,7 @@ function keyPressed() {
     line(200 + dx, 300 + 1 + dy, 200 + dx, 300 - 15 + dy);
     pop();
 
+    // accounts for line breaks
     if (200 + dx >= windowWidth - 160 && thePrompt[letterCounter - 1] === " ") {
       dy += 40;
       endingPosition = dx;
@@ -313,7 +334,7 @@ function keyPressed() {
       correctDy = dy;
     }
 
-    // wpm stuff
+    // wpm calculations and displaying
     wpm = Math.round(correctTypedCounter / 4.5 / ((millis() - beginTime) / 60000));
 
     push();
@@ -336,28 +357,42 @@ function keyPressed() {
   }
 
   // ctrl held
-  if (keyCode === 17 && !finishedTyping && wrongKeysCounter !== 0) {
+  if (!dead && keyCode === 17 && !finishedTyping && wrongKeysCounter !== 0) {
     ctrlHeld = true;
   }
 
   // backspace
-  if (keyIsDown && keyCode === 8 && !finishedTyping && wrongKeysCounter !== 0) {
+  if (!dead && keyIsDown && keyCode === 8 && !finishedTyping && wrongKeysCounter !== 0) {
     backspaceKey();
     keyHeld = true;
     backspaceTimer.start();
   }
+
+  // tab
+  if (keyCode === 9) {
+    isHighlighted = true;
+  }
+
+  // enter
+  if (keyCode === 13 && isHighlighted) {
+    displayPrompt();
+    isHighlighted = false;
+  }
 }
 
 function keyReleased() {
+  // if backspace is held, then repeatedly delete keys
   if (keyCode === 8) {
     keyHeld = false;
     backspaceTimer.reset();
   }
+  // if ctrl is held, then the ctrl backspace shortcut can be used
   if (keyCode === 17) {
     ctrlHeld = false;
   }
 }
 
+// essentially the same moving line logic as hitting the right key, expect for hitting the wrong key
 function backspaceKey() {
   letterCounter--;
   wrongKeysCounter--;
@@ -378,6 +413,7 @@ function backspaceKey() {
   compareKeys[letterCounter].state = "neutral";
 }
 
+// stats page
 function statsPage() {
   background(60);
   push()
@@ -408,6 +444,7 @@ function statsPage() {
   text("Correct/Incorrect: " + correctTypedCounter + "/" + incorrect, width/4 - 50, height/4 + 40);
   pop();
 
+    // Local storage system
   if (highScores.length === 0 && !hasSorted) {
     highScores.push(wpm);
   }
@@ -454,6 +491,7 @@ function statsPage() {
   pop();
 }
 
+// Used to sort the high scores (basically ripped from my class demos)
 function selectionSort(aList) {
   let swapLocation = 0;
   
@@ -476,7 +514,8 @@ function selectionSort(aList) {
 
 function displayPrompt() {
   background(60);
-  // resetting stuff
+
+  // resetting required variables to their original state
   finishedTyping = false;
   hasSorted = false;
   dead = false;
@@ -489,11 +528,13 @@ function displayPrompt() {
   y = 300;
   dx = 0;
   dy = 0;
+  correctDx = 0;
+  correctDy = 0;
   wrongKeysCounter = 0;
   correctTypedCounter = 0;
   totalTypedCounter = 0;
 
-  // new stuff
+  // creating a new prompt depending on the mode
   if (quoteToggle) {
     promptIndex = Math.floor(random(promptArray.length));
     showPrompt(promptIndex);
@@ -505,6 +546,7 @@ function displayPrompt() {
   buttonClicked = true;
 }
 
+// this toggles the instant death mode button
 function toggleColor() {
   deathToggle = !deathToggle;
   
@@ -516,6 +558,7 @@ function toggleColor() {
   }
 }
 
+// this toglges the switching colors of the 2 prompt modes
 function togglePrompt() {
   randomToggle = !randomToggle;
   quoteToggle = !quoteToggle;
@@ -530,6 +573,7 @@ function togglePrompt() {
   }
 }
 
+// this is the text/movie/book prompt displayer. Looks through every letter and displays it
 function showPrompt(u) {
   for (let i = 0; i < promptArray[u][0].length; i++) {
     let letterNumber = 0;
@@ -553,25 +597,35 @@ function showPrompt(u) {
   }
 }
 
+// this is the random prompt displayer. Picks a random word from the word bank, and displays it
 function showRandomPrompt() {
-  for (let u = 0; u < 100; u++) {
-    let wordIndex = Math.floor(random(workBank.length));
-
-    for (let i = 0; i < workBank[wordIndex].length + 1; i++) {
-      if (i !== workBank[wordIndex].length) {
+  let wordIndexes = [];
+  for (let u = 0; u < 50; u++) {
+    let wordIndex = Math.floor(random(wordBank.length));
+    // this makes sure no 2 words are repeated in a prompt
+    if (wordIndexes.length > 0) {
+      for (w = 0; w < wordIndexes.length; w++) {
+        if (wordIndex === wordIndexes[w]) {
+          wordIndex = Math.floor(random(wordBank.length));
+        }
+      }
+    }
+    wordIndexes.push(wordIndex);
+    for (let i = 0; i < wordBank[wordIndex].length + 1; i++) {
+      if (i !== wordBank[wordIndex].length) {
         let letterNumber = 0;
-        letterNumber = workBank[wordIndex].charCodeAt(i) - 32;
+        letterNumber = wordBank[wordIndex].charCodeAt(i) - 32;
         
         let thisKey = new Letter(x, y, characters, letterNumber, "neutral"); 
         
         compareKeys.push(thisKey);
-        thePrompt.push(workBank[wordIndex][i]); 
+        thePrompt.push(wordBank[wordIndex][i]); 
         compareKeys[i].display(130);
         
         theTextWidthArray.push(textWidth(characters[letterNumber]));
         x += textWidth(characters[letterNumber]) + 2;
       }
-      else if (u !== 99) {
+      else if (u !== 49) {
         let thisKey = new Letter(x, y, characters, 0, "neutral"); 
 
         compareKeys.push(thisKey);
